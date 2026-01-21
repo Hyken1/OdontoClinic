@@ -1,7 +1,14 @@
 const express = require('express');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
-const credenciais = require('./credenciais.json');
+let credenciais;
+try {
+    // Tenta pegar do arquivo local (no seu PC)
+    credenciais = require('./credenciais.json');
+} catch (e) {
+    // Se der erro, tenta pegar da pasta secreta do Render
+    credenciais = require('/etc/secrets/credenciais.json');
+}
 const cors = require('cors');
 const path = require('path'); // Novo módulo
 
