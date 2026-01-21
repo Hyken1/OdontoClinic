@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - OdontoClinic</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --cor-fundo-tela: #c79646;
+            --cor-sidebar: #a67c42;
+            --cor-texto-marrom: #5e4b35;
+        }
+        
+        body { 
+            background-color: var(--cor-fundo-tela); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* --- Efeito de Vidro --- */
+        .glass-login {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 50px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px; /* Largura máxima do cartão */
+            text-align: center;
+            color: white;
+        }
+
+        /* Campos de Texto Estilizados */
+        .form-control-glass {
+            width: 100%; /* <--- ADICIONADO: Faz o campo esticar até a borda */
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 25px;
+            transition: 0.3s;
+            box-sizing: border-box; /* Garante que o padding não quebre o layout */
+        }
+
+        .form-control-glass::placeholder { color: rgba(255, 255, 255, 0.7); }
+        
+        .form-control-glass:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+            color: white;
+            outline: 2px solid rgba(255,255,255,0.5);
+        }
+
+        /* Ícone do Dente */
+        .logo-box {
+            background: white;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px auto;
+            color: var(--cor-sidebar);
+            font-size: 3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Botão Entrar */
+        .btn-login {
+            background-color: var(--cor-texto-marrom);
+            color: white;
+            border-radius: 50px;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 100%; /* Botão também ocupa 100% da largura */
+            border: none;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-login:hover {
+            background-color: white;
+            color: var(--cor-texto-marrom);
+            transform: translateY(-2px);
+        }
+
+        h2.fw-bold { font-size: 2.5rem; }
+        p.lead { font-size: 1.2rem; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div class="glass-login">
+        <div class="logo-box">
+            <i class="fa-solid fa-tooth"></i>
+        </div>
+        
+        <h2 class="fw-bold mb-1">Bem-vindo!</h2>
+        <p class="lead mb-5">OdontoClinic System</p>
+
+        <form id="formLogin">
+            <div class="text-start">
+                <input type="email" id="email" class="form-control-glass" placeholder="E-mail" value="emilly@odontoclinic.com" required>
+            </div>
+            
+            <div class="text-start">
+                <input type="password" id="senha" class="form-control-glass" placeholder="Senha" required>
+            </div>
+
+            <button type="submit" class="btn-login mt-3">
+                Entrar no Sistema
+            </button>
+        </form>
+        
+        <div id="msgErro" class="mt-4 text-warning fw-bold" style="display: none;">
+            <i class="fa-solid fa-circle-exclamation me-1"></i> Senha incorreta!
+        </div>
+
+        <p class="mt-5 mb-0 opacity-50 small">Desenvolvido para Dra. Emilly Ebersol</p>
+    </div>
+
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const btn = document.querySelector('.btn-login');
+            const originalText = btn.innerHTML;
+            const senha = document.getElementById('senha').value;
+            const msgErro = document.getElementById('msgErro');
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Acessando...';
+            msgErro.style.display = 'none';
+
+            setTimeout(() => {
+                // --- SENHA PADRÃO: 123456 ---
+                if(senha === "123456") {
+                    window.location.href = "dashboard.html"; 
+                } else {
+                    btn.innerHTML = originalText;
+                    msgErro.style.display = 'block';
+                    document.querySelector('.glass-login').animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(-10px)' },
+                        { transform: 'translateX(10px)' },
+                        { transform: 'translateX(0)' }
+                    ], { duration: 300 });
+                }
+            }, 800);
+        });
+    </script>
+
+</body>
+</html>

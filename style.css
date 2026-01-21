@@ -1,0 +1,36 @@
+.lista-app {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item-app {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #f0f0f0;
+    transition: 0.2s;
+}
+
+.item-app:hover {
+    background: #fdfbf7; /* Um tom creme bem leve */
+    border-color: var(--cor-sidebar);
+    transform: scale(1.01);
+}
+
+.icon-box {
+    width: 45px; height: 45px;
+    background: rgba(199, 150, 70, 0.15);
+    color: var(--cor-sidebar);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 15px;
+}
+
+.text-area h6 { margin: 0; font-weight: 700; color: #333; }
+.valor-tag { font-weight: bold; color: #2ecc71; font-size: 1.1rem; } /*

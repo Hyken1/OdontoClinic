@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - OdontoClinic</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --cor-fundo-tela: #c79646;
+            --cor-sidebar: #a67c42;
+            --cor-texto-marrom: #5e4b35;
+        }
+        body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+
+        .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
+        .nav-link:hover { background-color: rgba(255,255,255, 0.2); color: white; transform: translateX(5px); }
+        .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
+        .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--cor-sidebar);
+            height: 100%;
+            transition: 0.3s;
+        }
+        .glass-card:hover { transform: translateY(-5px); }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 30px;
+        }
+
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--cor-texto-marrom); }
+        .stat-label { text-transform: uppercase; font-size: 0.85rem; font-weight: bold; color: #666; letter-spacing: 1px; }
+        
+        /* Estilo do Alerta */
+        .alert-item {
+            background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid #dc3545; /* Vermelho para alerta */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .alert-item strong { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+                <div class="text-center mt-4 mb-5">
+                    <i class="fa-solid fa-tooth fa-3x mb-2"></i>
+                    <h5 class="fw-bold">Emilly Ebersol</h5>
+                    <small>Cirurgiã-Dentista</small>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
+                    <li class="nav-item mt-3"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+                </ul>
+            </nav>
+
+            <main class="col-md-9 col-lg-10 p-4">
+                
+                <h2 class="fw-bold text-white mb-4"><i class="fa-solid fa-chart-line me-2 opacity-75"></i>Visão Geral</h2>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="glass-card">
+                            <span class="stat-label">Faturamento (Mês)</span>
+                            <div class="stat-value" id="fatMes">R$ 0,00</div>
+                            <small class="text-success fw-bold"><i class="fa-solid fa-arrow-trend-up"></i> Atualizado hoje</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card" style="border-left-color: #0dcaf0;">
+                            <span class="stat-label">Atendimentos (Mês)</span>
+                            <div class="stat-value" id="atendMes">0</div>
+                            <small class="text-info fw-bold">Pacientes atendidos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card" style="border-left-color: #ffc107;">
+                            <span class="stat-label">Total Pacientes</span>
+                            <div class="stat-value" id="totalPac">0</div>
+                            <small class="text-warning fw-bold">Base de cadastro</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h4 class="fw-bold text-white mb-3">
+                        <i class="fa-solid fa-bell me-2 text-warning"></i>Alertas de Manutenção
+                    </h4>
+                    <p class="text-white opacity-75 small mb-4">
+                        Pacientes que fizeram "Manutenção" há mais de 30 dias e <strong>não</strong> estão na agenda futura.
+                    </p>
+                    
+                    <div id="lista-alertas">
+                        <div class="text-center text-white"><i class="fa-solid fa-spinner fa-spin"></i> Verificando retornos...</div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <a href="agenda.html" class="btn btn-light w-100 py-3 fw-bold shadow"><i class="fa-solid fa-calendar-plus me-2"></i>Novo Agendamento</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="cadastro.html" class="btn btn-light w-100 py-3 fw-bold shadow"><i class="fa-solid fa-user-plus me-2"></i>Cadastrar Paciente</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="registros.html" class="btn btn-light w-100 py-3 fw-bold shadow"><i class="fa-solid fa-money-bill-wave me-2"></i>Lançar Pagamento</a>
+                    </div>
+                     <div class="col-md-3">
+                        <a href="notas.html" class="btn btn-light w-100 py-3 fw-bold shadow"><i class="fa-solid fa-file-invoice me-2"></i>Gerar Recibo</a>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.onload = async function() {
+            await carregarDadosDashboard();
+            await checarAlertasRetorno();
+        };
+
+        async function carregarDadosDashboard() {
+            try {
+                // Busca Registros
+                const resReg = await fetch('/api/registros');
+                const registros = await resReg.json();
+
+                // Busca Pacientes
+                const resPac = await fetch('/api/pacientes');
+                const pacientes = await resPac.json();
+
+                // 1. Total Pacientes
+                document.getElementById('totalPac').innerText = pacientes.length;
+
+                // 2. Filtra Mês Atual
+                const hoje = new Date();
+                const mesAtual = hoje.getMonth();
+                const anoAtual = hoje.getFullYear();
+
+                let faturamento = 0;
+                let atendimentos = 0;
+
+                registros.forEach(r => {
+                    // Converter "YYYY-MM-DD" para data
+                    const [ano, mes, dia] = r.data.split('-');
+                    // Mês no JS começa em 0 (Jan=0, Dez=11), então subtraímos 1 se vier 01-12
+                    const dataReg = new Date(ano, mes - 1, dia);
+
+                    if (dataReg.getMonth() === mesAtual && dataReg.getFullYear() === anoAtual) {
+                        atendimentos++;
+                        faturamento += parseFloat(r.valor.replace(',', '.'));
+                    }
+                });
+
+                document.getElementById('fatMes').innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('atendMes').innerText = atendimentos;
+
+            } catch (erro) {
+                console.error("Erro ao carregar dashboard:", erro);
+            }
+        }
+
+        // --- LÓGICA DE ALERTA DE RETORNO ---
+        async function checarAlertasRetorno() {
+            try {
+                const resReg = await fetch('/api/registros');
+                const registros = await resReg.json();
+                
+                const resAg = await fetch('/api/agenda');
+                const agenda = await resAg.json();
+
+                const pacientesOrto = {}; // Armazena a última data de manutenção de cada um
+                
+                // 1. Encontrar última manutenção de cada paciente nos registros passados
+                registros.forEach(r => {
+                    const proc = r.procedimento.toLowerCase();
+                    // Verifica se o procedimento tem "manutenção" ou "manutencao"
+                    if(proc.includes('manutenção') || proc.includes('manutencao')) {
+                        const dataReg = new Date(r.data + 'T00:00:00'); // Força timezone local
+                        
+                        if(!pacientesOrto[r.paciente] || dataReg > pacientesOrto[r.paciente]) {
+                            pacientesOrto[r.paciente] = dataReg;
+                        }
+                    }
+                });
+
+                // 2. Filtrar quem faz mais de 30 dias
+                const hoje = new Date();
+                hoje.setHours(0,0,0,0); // Zera hora para comparar apenas datas
+                
+                const containerAlertas = document.getElementById('lista-alertas');
+                containerAlertas.innerHTML = '';
+                let encontrouAlerta = false;
+
+                for (const [nome, dataUltima] of Object.entries(pacientesOrto)) {
+                    // Diferença em dias
+                    const diffTempo = hoje - dataUltima;
+                    const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24)); 
+
+                    if(diffDias >= 30) {
+                        // 3. Checar se JÁ está na agenda futura (para não avisar à toa)
+                        const jaAgendado = agenda.find(a => {
+                            const dataAg = new Date(a.data + 'T00:00:00');
+                            // Verifica se é o mesmo paciente E se a data é hoje ou futuro
+                            return a.paciente.toLowerCase() === nome.toLowerCase() && dataAg >= hoje;
+                        });
+
+                        if(!jaAgendado) {
+                            encontrouAlerta = true;
+                            // Formata data para exibir
+                            const dataFormatada = dataUltima.toLocaleDateString('pt-BR');
+                            
+                            containerAlertas.innerHTML += `
+                                <div class="alert-item">
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">${nome}</h6>
+                                        <small class="text-muted">Última manutenção: ${dataFormatada} (${diffDias} dias atrás)</small>
+                                    </div>
+                                    <a href="https://wa.me/?text=*Recepção:* Olá ${nome}, notamos que já faz mais de 30 dias da sua manutenção. Vamos agendar?" target="_blank" class="btn btn-sm btn-outline-success fw-bold">
+                                        <i class="fa-brands fa-whatsapp me-1"></i> Chamar
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
+                if(!encontrouAlerta) {
+                    containerAlertas.innerHTML = `
+                        <div class="text-center text-white opacity-75 border border-white rounded p-3">
+                            <i class="fa-solid fa-check-circle fa-2x mb-2"></i>
+                            <p class="m-0">Tudo em dia! Nenhum retorno atrasado pendente.</p>
+                        </div>
+                    `;
+                }
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('lista-alertas').innerHTML = '<p class="text-white">Erro ao carregar alertas.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

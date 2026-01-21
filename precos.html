@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Preços - OdontoClinic</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --cor-fundo-tela: #c79646;
+            --cor-sidebar: #a67c42;
+            --cor-texto-marrom: #5e4b35;
+        }
+        body { 
+            background-color: var(--cor-fundo-tela); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow-x: hidden; 
+        }
+
+        /* Sidebar */
+        .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
+        .nav-link:hover { background-color: rgba(255,255,255, 0.2); color: white; transform: translateX(5px); }
+        .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
+        .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
+
+        /* --- ESTILO GLASSMORPHISM --- */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            min-height: 70vh;
+        }
+
+        .glass-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--cor-sidebar);
+            transition: all 0.3s ease;
+        }
+
+        .glass-item:hover {
+            background: #fff;
+            transform: translateX(10px) scale(1.01);
+            box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2);
+        }
+
+        .glass-price {
+            background: var(--cor-sidebar);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(166, 124, 66, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        /* Barra de Pesquisa */
+        .search-glass {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #5e4b35;
+            padding-left: 50px; 
+        }
+        .search-icon {
+            position: absolute;
+            left: 20px;        
+            top: 50%;          
+            transform: translateY(-50%); 
+            color: var(--cor-sidebar);
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        /* Botão Flutuante (+) */
+        .btn-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background-color: var(--cor-sidebar);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        .btn-float:hover {
+            transform: scale(1.1) rotate(90deg);
+            background-color: white;
+            color: var(--cor-sidebar);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+                <div class="text-center mt-4 mb-5">
+                    <i class="fa-solid fa-tooth fa-3x mb-2"></i>
+                    <h5 class="fw-bold">Emilly Ebersol</h5>
+                    <small>Cirurgiã-Dentista</small>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
+                    <li class="nav-item">
+    <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
+</li>
+                    <li class="nav-item mt-4">
+    <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
+</li>
+                    <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+                </ul>
+            </nav>
+
+            <main class="col-md-9 col-lg-10 p-4">
+                
+                <div class="d-flex align-items-center mb-4 text-white">
+                    <i class="fa-solid fa-tags fa-2x me-3 opacity-75"></i>
+                    <div>
+                        <h2 class="fw-bold m-0">Procedimentos & Valores</h2>
+                        <small class="opacity-75">Gerencie sua tabela de forma simples</small>
+                    </div>
+                </div>
+
+                <div class="glass-container position-relative">
+                    
+                    <div class="mb-4 position-relative">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="inputBusca" class="form-control form-control-lg search-glass" placeholder="Pesquisar procedimento..." onkeyup="filtrarPrecos()">
+                    </div>
+
+                    <div id="lista-precos">
+                        <div class="text-center text-white py-5">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                            <p class="mt-2">Carregando tabela...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-float" data-bs-toggle="modal" data-bs-target="#modalNovoPreco">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+
+            </main>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNovoPreco" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--cor-sidebar); color: white;">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-tag me-2"></i>Novo Procedimento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formPreco">
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">NOME DO PROCEDIMENTO</label>
+                            <input type="text" id="novoProc" class="form-control form-control-lg" placeholder="Ex: Clareamento" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="fw-bold text-muted small">VALOR (R$)</label>
+                            <input type="number" id="novoValor" class="form-control form-control-lg" placeholder="0,00" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 btn-lg fw-bold" style="background-color: var(--cor-sidebar); border: none;">
+                            Salvar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let precosCache = []; 
+
+        window.onload = carregarPrecos;
+
+        async function carregarPrecos() {
+            const lista = document.getElementById('lista-precos');
+            try {
+                const res = await fetch('/api/precos');
+                precosCache = await res.json(); 
+                renderizarLista(precosCache);   
+            } catch (erro) {
+                lista.innerHTML = '<div class="alert alert-danger">Erro ao carregar tabela. Verifique o servidor.</div>';
+            }
+        }
+
+        function renderizarLista(dados) {
+            const lista = document.getElementById('lista-precos');
+            lista.innerHTML = ''; 
+            
+            if (dados.length === 0) {
+                lista.innerHTML = `
+                    <div class="text-center text-white py-4 opacity-75">
+                        <i class="fa-regular fa-folder-open fa-2x mb-2"></i>
+                        <p>Nenhum procedimento encontrado.</p>
+                    </div>`;
+                return;
+            }
+
+            dados.forEach(item => {
+                const valorFormatado = parseFloat(item.valor.replace(',','.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                lista.innerHTML += `
+                    <div class="glass-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-tooth text-muted me-3 fs-4 opacity-50"></i>
+                            <span class="fw-bold fs-5 text-dark">${item.procedimento}</span>
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="glass-price">${valorFormatado}</span>
+                            <button class="btn btn-link text-danger p-0 ms-2" title="Excluir" onclick="deletarPreco('${item.procedimento}')">
+                                <i class="fa-solid fa-xmark fs-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarPrecos() {
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const filtrados = precosCache.filter(item => 
+                item.procedimento.toLowerCase().includes(termo)
+            );
+            renderizarLista(filtrados);
+        }
+
+        document.getElementById('formPreco').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const proc = document.getElementById('novoProc').value;
+            const valor = document.getElementById('novoValor').value;
+
+            // Feedback visual no botão dentro do modal
+            const btn = e.target.querySelector('button');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+
+            try {
+                await fetch('/api/precos', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ procedimento: proc, valor: valor })
+                });
+                
+                // Limpa, fecha modal e recarrega
+                document.getElementById('formPreco').reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoPreco'));
+                modal.hide();
+                carregarPrecos();
+
+            } catch (erro) { alert("Erro ao salvar."); }
+            
+            btn.innerHTML = textoOriginal;
+        });
+
+        async function deletarPreco(proc) {
+            if(!confirm(`Remover "${proc}" da tabela?`)) return;
+            try {
+                await fetch('/api/precos', {
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ procedimento: proc })
+                });
+                carregarPrecos();
+            } catch (erro) { alert("Erro ao excluir."); }
+        }
+    </script>
+</body>
+</html>
