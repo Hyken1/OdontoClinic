@@ -98,6 +98,35 @@ app.post('/api/registros', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// --- ROTA DE EDIÇÃO DE PACIENTE ---
+app.put('/api/pacientes', async (req, res) => {
+    try {
+        const sheet = await acessarPlanilha('PACIENTES');
+        const rows = await sheet.getRows();
+        
+        // Procura a linha usando o NOME ANTIGO (antes da edição)
+        const nomeOriginal = req.body.nomeOriginal; 
+        const linha = rows.find(r => r.get('Nome') === nomeOriginal);
+
+        if (linha) {
+            // Atualiza todos os campos
+            linha.set('Nome', req.body.nome);
+            linha.set('DataNascimento', req.body.dataNascimento);
+            linha.set('CPF', req.body.cpf);
+            linha.set('CPFResponsavel', req.body.cpfResponsavel);
+            linha.set('Telefone', req.body.telefone);
+            linha.set('Endereco', req.body.endereco);
+            
+            await linha.save(); // Salva no Google Sheets
+            res.json({ message: "Cadastro atualizado!" });
+        } else {
+            res.status(404).json({ error: "Paciente não encontrado para edição." });
+        }
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.patch('/api/registros/status', async (req, res) => {
     try {
         const sheet = await acessarPlanilha('REGISTROS');

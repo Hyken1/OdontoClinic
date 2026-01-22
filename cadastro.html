@@ -68,7 +68,6 @@
         .info-label { font-size: 0.7rem; text-transform: uppercase; color: #a67c42; font-weight: 800; letter-spacing: 0.5px; }
         .info-text { font-size: 1rem; color: #444; font-weight: 600; }
         
-        /* Badge para menores de idade */
         .badge-menor {
             background-color: #ffefc2; color: #856404;
             font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;
@@ -91,12 +90,9 @@
                     <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
-                    <li class="nav-item">
-    <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
-</li>
-                    <li class="nav-item mt-4"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
-                    
+                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
                     <li class="nav-item mt-3"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
@@ -108,7 +104,7 @@
                         <h2 class="fw-bold m-0"><i class="fa-solid fa-users me-2 opacity-75"></i>Pacientes</h2>
                         <small class="opacity-75">Gerencie seus cadastros</small>
                     </div>
-                    <button class="btn btn-light text-primary fw-bold shadow" data-bs-toggle="modal" data-bs-target="#modalNovoPaciente">
+                    <button class="btn btn-light text-primary fw-bold shadow" onclick="abrirModalNovo()">
                         <i class="fa-solid fa-user-plus me-2"></i> Novo Paciente
                     </button>
                 </div>
@@ -135,11 +131,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Cadastrar Paciente</h5>
+                    <h5 class="modal-title fw-bold" id="tituloModal">Cadastrar Paciente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formPaciente">
+                        <input type="hidden" id="nomeOriginal">
+
                         <div class="mb-3">
                             <label class="fw-bold small">Nome Completo</label>
                             <input type="text" id="cadNome" class="form-control" required>
@@ -175,7 +173,7 @@
                             <input type="text" id="cadEndereco" class="form-control" placeholder="Rua, Número, Bairro...">
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100" style="background-color: var(--cor-sidebar);">Salvar Cadastro</button>
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: var(--cor-sidebar);">Salvar Dados</button>
                     </form>
                 </div>
             </div>
@@ -214,13 +212,15 @@
     <script>
         let pacientesCache = [];
         let modalHistoricoInstance;
+        let modalCadastroInstance;
 
         window.onload = function() {
             carregarPacientes();
             modalHistoricoInstance = new bootstrap.Modal(document.getElementById('modalHistorico'));
+            modalCadastroInstance = new bootstrap.Modal(document.getElementById('modalNovoPaciente'));
         };
 
-        // --- LÓGICA DE MAIOR/MENOR DE IDADE ---
+        // --- LÓGICA DE IDADE ---
         function verificarIdade() {
             const dataNasc = document.getElementById('cadNascimento').value;
             if (!dataNasc) return;
@@ -229,15 +229,11 @@
             const nascimento = new Date(dataNasc);
             let idade = hoje.getFullYear() - nascimento.getFullYear();
             const m = hoje.getMonth() - nascimento.getMonth();
-            if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
-                idade--;
-            }
+            if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
 
-            // Atualiza Label
+            // Atualiza UI
             const badge = document.getElementById('labelIdade');
             badge.innerText = `${idade} anos`;
-
-            // Mostra/Esconde Campo Responsável
             const boxResp = document.getElementById('boxResponsavel');
             const inputResp = document.getElementById('cadCPFResp');
             
@@ -249,13 +245,12 @@
                 badge.className = "badge bg-success p-2 w-100";
                 boxResp.style.display = "none";
                 inputResp.required = false;
-                inputResp.value = ""; // Limpa se virar maior
             }
         }
 
         async function carregarPacientes() {
             try {
-                const res = await fetch('/api/pacientes');
+                const res = await fetch('/api/pacientes'); // Link relativo para funcionar na nuvem
                 if (!res.ok) throw new Error("Erro API");
                 pacientesCache = await res.json();
                 renderizarLista(pacientesCache);
@@ -274,7 +269,6 @@
             }
 
             lista.forEach(p => {
-                // Cálculo de idade para exibição no card (opcional mas útil)
                 let badgeMenor = '';
                 if (p.dataNascimento) {
                     const nascimento = new Date(p.dataNascimento);
@@ -282,9 +276,11 @@
                     let idade = hoje.getFullYear() - nascimento.getFullYear();
                     const m = hoje.getMonth() - nascimento.getMonth();
                     if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
-                    
                     if(idade < 18) badgeMenor = '<span class="badge-menor">Menor</span>';
                 }
+
+                // Convertendo objeto para string segura para passar no onclick
+                const pString = JSON.stringify(p).replace(/"/g, '&quot;');
 
                 const card = `
                 <div class="glass-item" onclick="abrirProntuario('${p.nome}', '${p.telefone || ''}', '${p.cpf || ''}', '${p.cpfResponsavel || ''}')">
@@ -297,7 +293,7 @@
                             <div class="info-label">CPF</div>
                             <div class="info-text small">${p.cpf || '-'}</div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="info-label">Endereço</div>
                             <div class="info-text text-truncate small" title="${p.endereco || ''}">
                                 <i class="fa-solid fa-location-dot text-muted me-1"></i>${p.endereco || '-'}
@@ -307,8 +303,12 @@
                             <div class="info-label">Contato</div>
                             <div class="info-text small"><i class="fa-brands fa-whatsapp text-success me-1"></i>${p.telefone || '-'}</div>
                         </div>
-                        <div class="col-md-1 text-end">
-                            <button class="btn btn-link text-danger p-0" onclick="event.stopPropagation(); deletarPaciente('${p.nome}')" title="Excluir">
+                        
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-sm btn-outline-warning me-1" onclick="event.stopPropagation(); prepararEdicao(${pString})" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deletarPaciente('${p.nome}')" title="Excluir">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -318,9 +318,46 @@
             });
         }
 
+        // --- FUNÇÕES DE CADASTRO E EDIÇÃO ---
+
+        function abrirModalNovo() {
+            document.getElementById('formPaciente').reset();
+            document.getElementById('nomeOriginal').value = ''; // Limpa ID de edição
+            document.getElementById('tituloModal').innerText = "Cadastrar Paciente";
+            
+            // Reseta visual de menor idade
+            document.getElementById('boxResponsavel').style.display = 'none';
+            document.getElementById('labelIdade').className = 'badge bg-secondary p-2 w-100';
+            document.getElementById('labelIdade').innerText = '--- anos';
+            
+            modalCadastroInstance.show();
+        }
+
+        function prepararEdicao(p) {
+            document.getElementById('tituloModal').innerText = "Editar Paciente";
+            document.getElementById('nomeOriginal').value = p.nome; // Salva quem estamos editando
+
+            // Preenche os campos
+            document.getElementById('cadNome').value = p.nome;
+            document.getElementById('cadNascimento').value = p.dataNascimento || '';
+            document.getElementById('cadCPF').value = p.cpf || '';
+            document.getElementById('cadCPFResp').value = p.cpfResponsavel || '';
+            document.getElementById('cadTel').value = p.telefone || '';
+            document.getElementById('cadEndereco').value = p.endereco || '';
+
+            // Roda a lógica de idade para mostrar/esconder campo responsável
+            verificarIdade();
+
+            modalCadastroInstance.show();
+        }
+
         document.getElementById('formPaciente').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const novo = {
+            
+            const nomeOriginal = document.getElementById('nomeOriginal').value;
+            
+            const dados = {
+                nomeOriginal: nomeOriginal, // Se tiver valor, é edição. Se vazio, é novo.
                 nome: document.getElementById('cadNome').value,
                 dataNascimento: document.getElementById('cadNascimento').value,
                 cpf: document.getElementById('cadCPF').value,
@@ -329,27 +366,30 @@
                 endereco: document.getElementById('cadEndereco').value 
             };
             
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoPaciente'));
-            modal.hide();
+            // Decide se cria (POST) ou edita (PUT)
+            const metodo = nomeOriginal ? 'PUT' : 'POST';
+            
+            modalCadastroInstance.hide();
             
             try {
                 const res = await fetch('/api/pacientes', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(novo)
+                    method: metodo, 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(dados)
                 });
                 const resposta = await res.json();
+                
                 if (res.ok) {
-                    alert("✅ Paciente cadastrado!");
-                    document.getElementById('formPaciente').reset();
-                    document.getElementById('boxResponsavel').style.display = 'none'; // Reseta visual
-                    document.getElementById('labelIdade').className = 'badge bg-secondary p-2 w-100';
-                    document.getElementById('labelIdade').innerText = '--- anos';
+                    alert(nomeOriginal ? "✅ Cadastro atualizado!" : "✅ Paciente cadastrado!");
                     carregarPacientes();
-                } else { alert("⚠️ " + (resposta.error || "Erro ao salvar.")); }
+                } else { 
+                    alert("⚠️ " + (resposta.error || "Erro ao salvar.")); 
+                }
             } catch (erro) { alert("Erro de conexão."); }
         });
 
         async function deletarPaciente(nome) {
-            if (!confirm(`Excluir cadastro de "${nome}"?`)) return;
+            if (!confirm(`Tem certeza que deseja EXCLUIR "${nome}"?`)) return;
             try {
                 await fetch('/api/pacientes', {
                     method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nome: nome })
@@ -361,8 +401,6 @@
         async function abrirProntuario(nome, telefone, cpf, cpfResp) {
             document.getElementById('histNome').innerText = nome;
             document.getElementById('histContato').innerText = telefone || '-';
-            
-            // Exibe CPFs no cabeçalho do prontuário
             let dadosExtras = `CPF: ${cpf || 'Não inf.'}`;
             if(cpfResp) dadosExtras += ` | <span class="text-danger fw-bold">Responsável: ${cpfResp}</span>`;
             document.getElementById('histDadosExtras').innerHTML = dadosExtras;
