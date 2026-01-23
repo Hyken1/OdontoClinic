@@ -156,11 +156,11 @@
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="fw-bold small">CPF Paciente</label>
-                                <input type="text" id="cadCPF" class="form-control" placeholder="000.000.000-00">
+                                <input type="text" id="cadCPF" class="form-control" placeholder="000.000.000-00" maxlength="14" oninput="aplicarMascaraCPF(this)">
                             </div>
                             <div class="col-6 mb-3" id="boxResponsavel" style="display: none;">
                                 <label class="fw-bold small text-danger">CPF Responsável *</label>
-                                <input type="text" id="cadCPFResp" class="form-control border-danger" placeholder="Obrigatório">
+                                <input type="text" id="cadCPFResp" class="form-control border-danger" placeholder="Obrigatório" maxlength="14" oninput="aplicarMascaraCPF(this)">
                             </div>
                         </div>
                         
@@ -219,6 +219,16 @@
             modalHistoricoInstance = new bootstrap.Modal(document.getElementById('modalHistorico'));
             modalCadastroInstance = new bootstrap.Modal(document.getElementById('modalNovoPaciente'));
         };
+
+        // --- MÁSCARA DE CPF ---
+        function aplicarMascaraCPF(input) {
+            let v = input.value;
+            v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
+            v = v.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o terceiro e o quarto dígitos
+            v = v.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o terceiro e o quarto dígitos de novo (para o segundo bloco)
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca um hífen entre o terceiro e o quarto dígitos
+            input.value = v;
+        }
 
         // --- LÓGICA DE IDADE ---
         function verificarIdade() {
@@ -279,7 +289,6 @@
                     if(idade < 18) badgeMenor = '<span class="badge-menor">Menor</span>';
                 }
 
-                // Convertendo objeto para string segura para passar no onclick
                 const pString = JSON.stringify(p).replace(/"/g, '&quot;');
 
                 const card = `
@@ -322,10 +331,8 @@
 
         function abrirModalNovo() {
             document.getElementById('formPaciente').reset();
-            document.getElementById('nomeOriginal').value = ''; // Limpa ID de edição
+            document.getElementById('nomeOriginal').value = ''; 
             document.getElementById('tituloModal').innerText = "Cadastrar Paciente";
-            
-            // Reseta visual de menor idade
             document.getElementById('boxResponsavel').style.display = 'none';
             document.getElementById('labelIdade').className = 'badge bg-secondary p-2 w-100';
             document.getElementById('labelIdade').innerText = '--- anos';
@@ -335,9 +342,8 @@
 
         function prepararEdicao(p) {
             document.getElementById('tituloModal').innerText = "Editar Paciente";
-            document.getElementById('nomeOriginal').value = p.nome; // Salva quem estamos editando
+            document.getElementById('nomeOriginal').value = p.nome;
 
-            // Preenche os campos
             document.getElementById('cadNome').value = p.nome;
             document.getElementById('cadNascimento').value = p.dataNascimento || '';
             document.getElementById('cadCPF').value = p.cpf || '';
@@ -345,7 +351,6 @@
             document.getElementById('cadTel').value = p.telefone || '';
             document.getElementById('cadEndereco').value = p.endereco || '';
 
-            // Roda a lógica de idade para mostrar/esconder campo responsável
             verificarIdade();
 
             modalCadastroInstance.show();
@@ -357,7 +362,7 @@
             const nomeOriginal = document.getElementById('nomeOriginal').value;
             
             const dados = {
-                nomeOriginal: nomeOriginal, // Se tiver valor, é edição. Se vazio, é novo.
+                nomeOriginal: nomeOriginal,
                 nome: document.getElementById('cadNome').value,
                 dataNascimento: document.getElementById('cadNascimento').value,
                 cpf: document.getElementById('cadCPF').value,
@@ -366,7 +371,6 @@
                 endereco: document.getElementById('cadEndereco').value 
             };
             
-            // Decide se cria (POST) ou edita (PUT)
             const metodo = nomeOriginal ? 'PUT' : 'POST';
             
             modalCadastroInstance.hide();
