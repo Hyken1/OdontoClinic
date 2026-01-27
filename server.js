@@ -178,11 +178,18 @@ app.post('/api/pacientes', async (req, res) => {
         const rows = await sheet.getRows();
         const novoNome = req.body.nome.trim();
         const novoCPF = req.body.cpf ? req.body.cpf.trim() : "";
-        const pExiste = rows.find(r => 
-            r.get('Nome').trim().toLowerCase() === novoNome.toLowerCase() || 
-            (novoCPF && r.get('CPF') === novoCPF)
-        );
-        if(pExiste) return res.status(409).json({error: "Paciente já cadastrado."});
+        // --- MODO DETETIVE DE DUPLICIDADE ---
+const nomeExiste = rows.find(r => r.get('Nome')?.trim().toLowerCase() === novoNome.toLowerCase());
+const cpfExiste = novoCPF ? rows.find(r => r.get('CPF')?.trim() === novoCPF) : null;
+
+if (nomeExiste) {
+    return res.status(409).json({ error: `Já existe um cadastro com o nome "${nomeExiste.get('Nome')}".` });
+}
+
+if (cpfExiste) {
+    // Aqui ele vai te contar QUEM é o dono do CPF fantasma
+    return res.status(409).json({ error: `O CPF ${novoCPF} já está cadastrado para o paciente: "${cpfExiste.get('Nome') || 'Sem Nome'}"` });
+}
         await sheet.addRow({
             Nome: req.body.nome,
             DataNascimento: req.body.dataNascimento,
