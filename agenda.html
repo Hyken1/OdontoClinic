@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +23,7 @@
         .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
         .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
 
-        /* --- GLASSMORPHISM --- */
+        /* Glassmorphism */
         .glass-container {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -31,91 +31,22 @@
             padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            min-height: 50vh;
+            min-height: 70vh;
         }
 
-        .glass-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            margin-bottom: 15px;
+        .glass-card {
             background: rgba(255, 255, 255, 0.85);
             border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border-left: 6px solid var(--cor-sidebar);
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
+        .glass-card:hover { transform: translateY(-3px); background: #fff; }
 
-        .glass-item:hover {
-            background: #fff;
-            transform: translateX(10px) scale(1.01);
-            box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2);
-        }
-
-        .form-glass {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-
-        /* Botões de Horário (Time Slots) */
-        .time-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .time-btn {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--cor-texto-marrom);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .time-btn:hover {
-            background: #f0f0f0;
-            transform: scale(1.05);
-        }
-
-        .time-btn.active {
-            background: var(--cor-sidebar);
-            color: white;
-            border-color: var(--cor-sidebar);
-            box-shadow: 0 4px 10px rgba(166, 124, 66, 0.4);
-        }
-
-        /* ESTILO NOVO: Horário Ocupado/Bloqueado */
-        .time-btn.btn-disabled {
-            background-color: #e9ecef; /* Cinza claro */
-            color: #adb5bd; /* Texto cinza */
-            text-decoration: line-through; /* Riscado */
-            cursor: not-allowed;
-            pointer-events: none; /* O SEGREDO: Impede qualquer clique */
-            border-color: #dee2e6;
-            box-shadow: none !important;
-            transform: none !important;
-        }
-
-        .date-selector-glass {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white; padding: 10px 20px; border-radius: 50px;
-            display: flex; align-items: center; gap: 10px; font-weight: bold;
-        }
-        .date-selector-glass input {
-            background: transparent; border: none; color: white; 
-            font-weight: bold; font-size: 1.1rem; outline: none;
-        }
-        .date-selector-glass input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .hora-destaque { font-size: 1.5rem; font-weight: 800; color: var(--cor-sidebar); }
+        .data-header { color: white; font-weight: bold; font-size: 1.2rem; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -133,79 +64,30 @@
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
                     <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
-                    <li class="nav-item">
-    <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
-</li>
-    <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
-</li>
-                    <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
+                    <li class="nav-item mt-3"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
 
             <main class="col-md-9 col-lg-10 p-4">
                 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="text-white">
-                        <h2 class="fw-bold m-0"><i class="fa-regular fa-calendar-check me-2 opacity-75"></i>Agenda</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4 text-white">
+                    <div>
+                        <h2 class="fw-bold m-0"><i class="fa-solid fa-calendar-check me-2 opacity-75"></i>Agenda</h2>
                         <small class="opacity-75">Organize seus atendimentos</small>
                     </div>
-                    
-                    <div class="date-selector-glass">
-                        <i class="fa-regular fa-calendar"></i>
-                        <input type="date" id="dataFiltro" onchange="carregarAgenda()">
-                    </div>
+                    <button class="btn btn-light text-primary fw-bold shadow" data-bs-toggle="modal" data-bs-target="#modalNovoAgendamento">
+                        <i class="fa-solid fa-plus me-2"></i> Novo Agendamento
+                    </button>
                 </div>
 
-                <form id="formAgenda" class="form-glass">
-                    <div class="row">
-                        <div class="col-md-6 border-end">
-                            <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-user-pen me-2"></i>Dados do Agendamento</h5>
-                            
-                            <div class="mb-3">
-                                <label class="small fw-bold text-muted">PACIENTE</label>
-                                <input type="text" id="agPaciente" class="form-control bg-light border-0 py-2" placeholder="Nome Completo" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="small fw-bold text-muted">PROCEDIMENTO</label>
-                                <select id="agProcedimento" class="form-select bg-light border-0 py-2" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="Avaliação">Avaliação (Padrão)</option>
-                                </select>
-                            </div>
-
-                            <input type="hidden" id="agHoraSelecionada"> 
-                            
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm" style="background-color: var(--cor-texto-marrom); border: none;">
-                                    Confirmar Agendamento
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 ps-md-4">
-                            <h5 class="fw-bold mb-3 text-secondary"><i class="fa-regular fa-clock me-2"></i>Selecione o Horário</h5>
-                            
-                            <p class="small text-muted mb-2">Manhã</p>
-                            <div class="time-grid mb-3" id="gridManha"></div>
-
-                            <p class="small text-muted mb-2">Tarde</p>
-                            <div class="time-grid" id="gridTarde"></div>
-                            
-                            <div id="feedbackHorario" class="text-danger small mt-2 fw-bold" style="display: none;">
-                                * Selecione um horário acima.
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
                 <div class="glass-container">
-                    <h5 class="text-white mb-4 opacity-75 fw-bold">Compromissos do Dia</h5>
                     <div id="lista-agenda">
                         <div class="text-center text-white py-5">
                             <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                            <p class="mt-2">Carregando horários...</p>
+                            <p class="mt-2">Carregando agenda...</p>
                         </div>
                     </div>
                 </div>
@@ -214,159 +96,171 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalNovoAgendamento" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Novo Agendamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgenda">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small">Data</label>
+                                <input type="date" id="agData" class="form-control" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small">Hora</label>
+                                <input type="time" id="agHora" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold small">Paciente</label>
+                            
+                            <input type="text" id="agPaciente" class="form-control" list="sugestoesPacientes" placeholder="Comece a digitar o nome..." required autocomplete="off">
+                            
+                            <datalist id="sugestoesPacientes"></datalist>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold small">Procedimento</label>
+                            <input type="text" id="agProcedimento" class="form-control" placeholder="Ex: Avaliação, Limpeza..." required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: var(--cor-sidebar);">Agendar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('dataFiltro').valueAsDate = new Date();
-        
-        const horariosManha = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
-        const horariosTarde = ["13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"];
-
-        window.onload = function() {
-            gerarBotoesHorario();
+        window.onload = async function() {
             carregarAgenda();
-            carregarOpcoesProcedimentos();
+            carregarSugestoesPacientes(); // Carrega os nomes para o autocomplete
         };
 
-        async function carregarOpcoesProcedimentos() {
-            const select = document.getElementById('agProcedimento');
+        // --- FUNÇÃO PARA CARREGAR SUGESTÕES DE PACIENTES ---
+        async function carregarSugestoesPacientes() {
             try {
-                const res = await fetch('/api/precos');
-                const precos = await res.json();
-                precos.sort((a,b) => a.procedimento.localeCompare(b.procedimento));
-                precos.forEach(item => {
-                    const opt = document.createElement('option');
-                    opt.value = item.procedimento; 
-                    opt.innerText = item.procedimento; 
-                    select.appendChild(opt);
+                // Busca a lista de pacientes já cadastrados
+                const res = await fetch('/api/pacientes');
+                if(!res.ok) return; // Se der erro silencioso, apenas não sugere
+                
+                const pacientes = await res.json();
+                const datalist = document.getElementById('sugestoesPacientes');
+                
+                datalist.innerHTML = ''; // Limpa antes de preencher
+                
+                // Adiciona cada paciente como uma opção na lista
+                pacientes.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.nome; // O valor que vai para o input
+                    datalist.appendChild(option);
                 });
-            } catch (error) { console.error("Erro ao carregar procedimentos:", error); }
-        }
-
-        function gerarBotoesHorario() {
-            const divManha = document.getElementById('gridManha');
-            const divTarde = document.getElementById('gridTarde');
-            const criarBotao = (hora) => {
-                const btn = document.createElement('div');
-                btn.className = 'time-btn';
-                btn.innerText = hora;
-                // Adiciona um ID para encontrarmos fácil depois (ex: btn-08:00)
-                btn.id = `btn-${hora.replace(':', '')}`;
-                btn.onclick = () => selecionarHorario(btn, hora);
-                return btn;
-            };
-            horariosManha.forEach(h => divManha.appendChild(criarBotao(h)));
-            horariosTarde.forEach(h => divTarde.appendChild(criarBotao(h)));
-        }
-
-        function selecionarHorario(elemento, hora) {
-            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-            elemento.classList.add('active');
-            document.getElementById('agHoraSelecionada').value = hora;
-            document.getElementById('feedbackHorario').style.display = 'none';
+                
+            } catch (e) {
+                console.error("Erro ao carregar sugestões:", e);
+            }
         }
 
         async function carregarAgenda() {
-            const dataSelecionada = document.getElementById('dataFiltro').value;
-            const container = document.getElementById('lista-agenda');
-            
-            // 1. Limpa seleção anterior ao mudar a data
-            document.getElementById('agHoraSelecionada').value = '';
-            document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('active', 'btn-disabled'); // Remove bloqueio e seleção
-                btn.title = "Disponível";
-            });
-
-            container.innerHTML = '<div class="text-center text-white py-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>';
-
             try {
                 const res = await fetch('/api/agenda');
-                const todos = await res.json();
-                const agendaDia = todos.filter(item => item.data === dataSelecionada);
-                agendaDia.sort((a,b) => a.hora.localeCompare(b.hora));
-
-                // 2. BLOQUEIA HORÁRIOS JÁ AGENDADOS
-                agendaDia.forEach(agendamento => {
-                    // Procura o botão pelo ID que criamos (btn-0800)
-                    const idBotao = `btn-${agendamento.hora.replace(':', '')}`;
-                    const btn = document.getElementById(idBotao);
-                    if (btn) {
-                        btn.classList.add('btn-disabled');
-                        btn.title = "Horário Indisponível";
-                    }
-                });
-
-                // 3. Renderiza a lista
+                const agenda = await res.json();
+                const container = document.getElementById('lista-agenda');
                 container.innerHTML = '';
-                if (agendaDia.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center text-white py-5 opacity-75">
-                            <i class="fa-regular fa-clock fa-3x mb-3"></i>
-                            <h4>Agenda livre.</h4>
-                            <p>Nenhum paciente marcado para esta data.</p>
-                        </div>`;
+
+                if (agenda.length === 0) {
+                    container.innerHTML = `<div class="text-center text-white mt-5 opacity-75"><h4>Nenhum agendamento futuro.</h4></div>`;
+                    return;
                 }
 
-                agendaDia.forEach(item => {
-                    container.innerHTML += `
-                        <div class="glass-item">
-                            <div class="d-flex align-items-center gap-4">
-                                <div class="bg-light rounded-pill px-3 py-2 fw-bold text-dark border shadow-sm">
-                                    <i class="fa-regular fa-clock me-2 text-muted"></i>${item.hora}
-                                </div>
-                                <div>
-                                    <h5 class="m-0 fw-bold text-dark">${item.paciente}</h5>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">${item.procedimento}</small>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-link text-danger opacity-50 hover-opacity-100" onclick="deletarAgendamento('${item.data}', '${item.hora}')" title="Cancelar">
-                                <i class="fa-solid fa-trash fs-5"></i>
-                            </button>
-                        </div>
-                    `;
+                // Ordena por data e hora
+                agenda.sort((a,b) => {
+                    if (a.data === b.data) return a.hora.localeCompare(b.hora);
+                    return a.data.localeCompare(b.data);
                 });
+
+                let ultimaData = '';
+
+                agenda.forEach(item => {
+                    // Converter Data para formato BR
+                    const [ano, mes, dia] = item.data.split('-');
+                    const dataFormatada = `${dia}/${mes}/${ano}`;
+                    
+                    // Cria cabeçalho se mudou o dia
+                    if (item.data !== ultimaData) {
+                        // Verifica se é hoje, amanhã ou data normal
+                        const hoje = new Date().toISOString().split('T')[0];
+                        let textoData = dataFormatada;
+                        if (item.data === hoje) textoData = "Hoje (" + dataFormatada + ")";
+                        
+                        container.innerHTML += `<div class="data-header"><i class="fa-regular fa-calendar me-2"></i>${textoData}</div>`;
+                        ultimaData = item.data;
+                    }
+
+                    const card = `
+                    <div class="glass-card">
+                        <div class="row align-items-center">
+                            <div class="col-3 text-center border-end">
+                                <div class="hora-destaque">${item.hora}</div>
+                            </div>
+                            <div class="col-7 ps-4">
+                                <h5 class="fw-bold m-0 text-dark">${item.paciente}</h5>
+                                <small class="text-muted text-uppercase fw-bold">${item.procedimento}</small>
+                            </div>
+                            <div class="col-2 text-end">
+                                <button class="btn btn-outline-danger btn-sm" onclick="deletarAgendamento('${item.data}', '${item.hora}')" title="Cancelar">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                    container.innerHTML += card;
+                });
+
             } catch (erro) {
-                container.innerHTML = '<div class="alert alert-danger">Erro ao carregar agenda.</div>';
+                document.getElementById('lista-agenda').innerHTML = '<p class="text-white text-center">Erro ao carregar agenda.</p>';
             }
         }
 
         document.getElementById('formAgenda').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const hora = document.getElementById('agHoraSelecionada').value;
-            if (!hora) { document.getElementById('feedbackHorario').style.display = 'block'; return; }
-
-            const btn = e.target.querySelector('button');
-            const original = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
-
-            const dados = {
-                data: document.getElementById('dataFiltro').value,
-                hora: hora,
+            const novo = {
+                data: document.getElementById('agData').value,
+                hora: document.getElementById('agHora').value,
                 paciente: document.getElementById('agPaciente').value,
                 procedimento: document.getElementById('agProcedimento').value
             };
-
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoAgendamento'));
+            modal.hide();
+            
             try {
-                await fetch('/api/agenda', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dados)
+                const res = await fetch('/api/agenda', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(novo)
                 });
-                carregarAgenda();
-                document.getElementById('agPaciente').value = '';
-                document.getElementById('agProcedimento').value = '';
-                // Não precisa limpar o horário manualmente aqui, o carregarAgenda já reseta tudo
-            } catch (erro) { alert("Erro ao agendar."); }
-            btn.innerHTML = original;
+                if (res.ok) {
+                    alert("✅ Agendado com sucesso!");
+                    document.getElementById('formAgenda').reset();
+                    carregarAgenda();
+                } else { alert("Erro ao agendar."); }
+            } catch (erro) { alert("Erro de conexão."); }
         });
 
         async function deletarAgendamento(data, hora) {
-            if(!confirm("Cancelar este agendamento?")) return;
+            if (!confirm("Cancelar este agendamento?")) return;
             try {
                 await fetch('/api/agenda', {
                     method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ data, hora })
                 });
-                carregarAgenda(); // Ao recarregar, o botão volta a ficar disponível automaticamente
-            } catch (erro) { alert("Erro ao cancelar."); }
+                carregarAgenda();
+            } catch (erro) { alert("Erro de conexão."); }
         }
     </script>
 </body>

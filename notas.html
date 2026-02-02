@@ -15,11 +15,11 @@
             --cor-texto-marrom: #5e4b35;
         }
         
-        /* CORREÇÃO DA BARRA DE ROLAGEM */
+        
         body { 
             background-color: var(--cor-fundo-tela); 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            overflow-x: hidden; /* <--- ISSO MATA A BARRA LATERAL */
+            overflow-x: hidden; 
         }
 
         .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
@@ -42,13 +42,13 @@
         .glass-item {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 15px 20px; /* Reduzi um pouco o padding para ficar mais compacto */
+            padding: 15px 20px; 
             margin-bottom: 15px;
             display: flex; justify-content: space-between; align-items: center;
             border-left: 6px solid var(--cor-sidebar);
             transition: 0.2s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            width: 100%; /* Garante que não estoure */
+            width: 100%; 
         }
         .glass-item:hover { background: white; transform: scale(1.005); }
 
@@ -231,7 +231,7 @@
             });
         }
 
-        // --- ATUALIZAÇÃO OTIMISTA (Instantânea) ---
+        
         async function alternarStatus(btnElement, id, statusAtual) {
             const novoStatus = statusAtual === 'Pendente' ? 'Emitido' : 'Pendente';
             
