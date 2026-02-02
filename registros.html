@@ -113,11 +113,11 @@
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
                     <li class="nav-item">
-    <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
-</li>
+                        <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
+                    </li>
                     <li class="nav-item mt-4">
-    <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
-</li>
+                        <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
+                    </li>
                     <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
@@ -142,12 +142,13 @@
                         <label class="small text-muted fw-bold ms-1">PROCEDIMENTO</label>
                         <select id="regProc" class="form-select bg-light border-0" onchange="atualizarValorAutomatico()" required>
                             <option value="" disabled selected>Selecione...</option>
-                            </select>
+                        </select>
                     </div>
 
                     <div class="col-md-3">
                         <label class="small text-muted fw-bold ms-1">PACIENTE</label>
-                        <input type="text" id="regPac" class="form-control bg-light border-0" placeholder="Nome" required>
+                        <input type="text" id="regPac" class="form-control bg-light border-0" placeholder="Nome" required list="sugestoesPacientes" autocomplete="off">
+                        <datalist id="sugestoesPacientes"></datalist>
                     </div>
                     
                     <div class="col-md-2">
@@ -209,7 +210,27 @@
         window.onload = function() {
             carregarOpcoesProcedimentos();
             carregarRegistros();
+            carregarSugestoesPacientes(); // MUDANÇA 2: Carrega a lista de sugestões ao abrir
         };
+
+        // --- MUDANÇA 3: Nova função para buscar nomes ---
+        async function carregarSugestoesPacientes() {
+            try {
+                const res = await fetch('/api/pacientes');
+                if(!res.ok) return;
+                
+                const pacientes = await res.json();
+                const datalist = document.getElementById('sugestoesPacientes');
+                
+                datalist.innerHTML = ''; 
+                
+                pacientes.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.nome;
+                    datalist.appendChild(option);
+                });
+            } catch (e) { console.error("Erro ao carregar sugestões:", e); }
+        }
 
         // --- 1. CARREGA LISTA NO SELECT ---
         async function carregarOpcoesProcedimentos() {
