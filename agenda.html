@@ -80,7 +80,7 @@
                             
                             <div class="mb-3">
                                 <label class="small fw-bold text-muted">DENTISTA RESPONSÁVEL</label>
-                                <input type="text" id="agDentista" class="form-control bg-light border-0 py-2" placeholder="Deixe vazio para Dra. Emilly">
+                                <input type="text" id="agDentista" class="form-control bg-light border-0 py-2" placeholder="Deixe vazio para Emilly">
                             </div>
 
                             <div class="mb-3">
@@ -254,7 +254,7 @@
 
             // Lógica do Dentista Padrão
             let dentistaInput = document.getElementById('agDentista').value;
-            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Dra. Emilly";
+            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Emilly";
 
             const dados = {
                 data: document.getElementById('dataFiltro').value,
