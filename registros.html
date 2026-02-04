@@ -9,95 +9,31 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        :root {
-            --cor-fundo-tela: #c79646;
-            --cor-sidebar: #a67c42;
-            --cor-card-claro: #fbf8f3;
-            --cor-texto-marrom: #5e4b35;
-        }
-        body { 
-            background-color: var(--cor-fundo-tela); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            overflow-x: hidden; 
-        }
+        :root { --cor-fundo-tela: #c79646; --cor-sidebar: #a67c42; --cor-card-claro: #fbf8f3; --cor-texto-marrom: #5e4b35; }
+        body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
 
-        /* Sidebar */
         .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
         .nav-link:hover { background-color: rgba(255,255,255, 0.2); color: white; transform: translateX(5px); }
         .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
         .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
 
-        /* --- ESTILO GLASSMORPHISM --- */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            min-height: 60vh;
-        }
+        .glass-container { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); min-height: 60vh; }
+        .glass-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.85); border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid var(--cor-sidebar); transition: all 0.3s ease; }
+        .glass-item:hover { background: #fff; transform: translateX(10px) scale(1.01); box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2); }
+        .form-glass { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 20px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-        .glass-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--cor-sidebar);
-            transition: all 0.3s ease;
-        }
-
-        .glass-item:hover {
-            background: #fff;
-            transform: translateX(10px) scale(1.01);
-            box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2);
-        }
-
-        .form-glass {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-
-        .date-selector-glass {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white; padding: 10px 20px; border-radius: 50px;
-            display: flex; align-items: center; gap: 10px; font-weight: bold;
-        }
-        .date-selector-glass input {
-            background: transparent; border: none; color: white; 
-            font-weight: bold; font-size: 1.1rem; outline: none;
-        }
+        .date-selector-glass { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .date-selector-glass input { background: transparent; border: none; color: white; font-weight: bold; font-size: 1.1rem; outline: none; }
         .date-selector-glass input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .badge-valor { font-size: 1.2rem; color: #198754; font-weight: 800; }
-
-        .total-glass {
-            background: var(--cor-sidebar);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 15px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            display: inline-block;
-        }
-
-        /* Estilo para os Badges de Tipo */
+        .total-glass { background: var(--cor-sidebar); color: white; padding: 15px 30px; border-radius: 15px; font-size: 1.3rem; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: inline-block; }
         .badge-particular { background-color: #ffd700; color: #5e4b35; border: 1px solid #e6c200; }
         .badge-convenio { background-color: #0dcaf0; color: #fff; border: 1px solid #0aa2c0; }
     </style>
 </head>
 <body>
-
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block">
@@ -112,24 +48,18 @@
                     <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
+                    <li class="nav-item mt-4"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
                     <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
 
             <main class="col-md-9 col-lg-10 p-4">
-                
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="text-white">
                         <h2 class="fw-bold m-0"><i class="fa-solid fa-book-open me-2 opacity-75"></i>Livro Caixa</h2>
                         <small class="opacity-75">Controle financeiro do dia</small>
                     </div>
-                    
                     <div class="date-selector-glass">
                         <i class="fa-regular fa-calendar"></i>
                         <input type="date" id="inputData" onchange="carregarRegistros()">
@@ -137,7 +67,6 @@
                 </div>
 
                 <form id="formRegistro" class="form-glass row g-2 align-items-end">
-                    
                     <div class="col-md-3">
                         <label class="small text-muted fw-bold ms-1">PROCEDIMENTO</label>
                         <select id="regProc" class="form-select bg-light border-0" onchange="atualizarValorAutomatico()" required>
@@ -151,6 +80,11 @@
                         <datalist id="sugestoesPacientes"></datalist>
                     </div>
                     
+                    <div class="col-md-2">
+                        <label class="small text-muted fw-bold ms-1">DENTISTA</label>
+                        <input type="text" id="regDentista" class="form-control bg-light border-0" placeholder="Padrão: Emilly">
+                    </div>
+
                     <div class="col-md-2">
                         <label class="small text-muted fw-bold ms-1">TIPO</label>
                         <select id="regTipo" class="form-select bg-light border-0">
@@ -181,22 +115,13 @@
                 </form>
 
                 <div class="glass-container">
-                    
                     <div id="lista-registros">
-                        <div class="text-center text-white py-5">
-                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                            <p class="mt-2">Carregando registros...</p>
-                        </div>
+                        <div class="text-center text-white py-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2">Carregando...</p></div>
                     </div>
-
                     <div class="d-flex justify-content-end mt-4 border-top border-light pt-3">
-                        <div class="total-glass">
-                            Total do Dia: <span id="displayTotal">R$ 0,00</span>
-                        </div>
+                        <div class="total-glass">Total do Dia: <span id="displayTotal">R$ 0,00</span></div>
                     </div>
-
                 </div>
-
             </main>
         </div>
     </div>
@@ -205,25 +130,21 @@
 
     <script>
         document.getElementById('inputData').valueAsDate = new Date();
-        let listaPrecosCache = []; // Guarda os preços para buscar rápido
+        let listaPrecosCache = []; 
 
         window.onload = function() {
             carregarOpcoesProcedimentos();
             carregarRegistros();
-            carregarSugestoesPacientes(); // MUDANÇA 2: Carrega a lista de sugestões ao abrir
+            carregarSugestoesPacientes(); 
         };
 
-        // --- MUDANÇA 3: Nova função para buscar nomes ---
         async function carregarSugestoesPacientes() {
             try {
                 const res = await fetch('/api/pacientes');
                 if(!res.ok) return;
-                
                 const pacientes = await res.json();
                 const datalist = document.getElementById('sugestoesPacientes');
-                
                 datalist.innerHTML = ''; 
-                
                 pacientes.forEach(p => {
                     const option = document.createElement('option');
                     option.value = p.nome;
@@ -232,16 +153,12 @@
             } catch (e) { console.error("Erro ao carregar sugestões:", e); }
         }
 
-        // --- 1. CARREGA LISTA NO SELECT ---
         async function carregarOpcoesProcedimentos() {
             const select = document.getElementById('regProc');
             try {
                 const res = await fetch('/api/precos');
                 listaPrecosCache = await res.json();
-                
-                // Ordena
                 listaPrecosCache.sort((a,b) => a.procedimento.localeCompare(b.procedimento));
-
                 listaPrecosCache.forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = item.procedimento;
@@ -251,14 +168,10 @@
             } catch (error) { console.error("Erro ao carregar procedimentos:", error); }
         }
 
-        // --- 2. PREENCHE VALOR AUTOMATICO ---
         function atualizarValorAutomatico() {
             const procSelecionado = document.getElementById('regProc').value;
-            // Procura o item na memória
             const item = listaPrecosCache.find(i => i.procedimento === procSelecionado);
-            
             if (item) {
-                // Converte "100,00" para 100.00 (formato que o input number aceita)
                 const valorNumerico = parseFloat(item.valor.replace(',', '.'));
                 document.getElementById('regValor').value = valorNumerico;
             }
@@ -268,23 +181,16 @@
             const dataSelecionada = document.getElementById('inputData').value;
             const container = document.getElementById('lista-registros');
             const displayTotal = document.getElementById('displayTotal');
-            
             container.innerHTML = '<div class="text-center text-white py-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>';
 
             try {
                 const res = await fetch(`/api/registros?data=${dataSelecionada}`);
                 const registros = await res.json();
-
                 container.innerHTML = '';
                 let totalDia = 0;
 
                 if (registros.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center text-white py-5 opacity-75">
-                            <i class="fa-solid fa-cash-register fa-3x mb-3"></i>
-                            <h4>Nenhum registro hoje.</h4>
-                            <p>Use o formulário acima para adicionar.</p>
-                        </div>`;
+                    container.innerHTML = `<div class="text-center text-white py-5 opacity-75"><i class="fa-solid fa-cash-register fa-3x mb-3"></i><h4>Nenhum registro hoje.</h4></div>`;
                     displayTotal.innerText = "R$ 0,00";
                     return;
                 }
@@ -292,92 +198,76 @@
                 registros.forEach(r => {
                     const valorNum = parseFloat(r.valor.replace(',', '.'));
                     totalDia += valorNum;
-                    
                     const valorVisual = valorNum === 0 ? "" : valorNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                     const pagamentoVisual = valorNum === 0 ? "" : `<span class="badge bg-secondary opacity-75 rounded-pill fw-normal me-2">${r.pagamento}</span>`;
-                    
                     const tipoClasse = r.tipo === 'Convênio' ? 'badge-convenio' : 'badge-particular';
                     const tipoTexto = r.tipo || 'Particular';
 
                     container.innerHTML += `
                         <div class="glass-item">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="bg-light rounded-circle p-2 text-muted">
-                                    <i class="fa-solid fa-receipt"></i>
-                                </div>
+                                <div class="bg-light rounded-circle p-2 text-muted"><i class="fa-solid fa-receipt"></i></div>
                                 <div>
                                     <h5 class="m-0 fw-bold text-dark">
                                         ${r.procedimento}
                                         <span class="badge rounded-pill ${tipoClasse}" style="font-size: 0.7rem; vertical-align: middle;">${tipoTexto}</span>
                                     </h5>
-                                    <small class="text-muted"><i class="fa-regular fa-user me-1"></i>${r.paciente}</small>
+                                    <div class="d-flex gap-2">
+                                        <small class="text-muted"><i class="fa-regular fa-user me-1"></i>${r.paciente}</small>
+                                        <small class="badge bg-secondary opacity-75" style="font-size: 0.7rem;">${r.dentista}</small>
+                                    </div>
                                 </div>
                             </div>
-
                             <div class="d-flex align-items-center">
                                 ${pagamentoVisual}
                                 <span class="badge-valor me-4">${valorVisual}</span>
-                                <button class="btn btn-link text-danger p-0" title="Excluir" onclick="deletarRegistro('${r.data}', '${r.paciente}', '${r.procedimento}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                                <button class="btn btn-link text-danger p-0" title="Excluir" onclick="deletarRegistro('${r.data}', '${r.paciente}', '${r.procedimento}')"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     `;
                 });
-
                 displayTotal.innerText = totalDia.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-            } catch (erro) {
-                console.error(erro);
-                container.innerHTML = '<div class="alert alert-danger">Erro ao carregar dados.</div>';
-            }
+            } catch (erro) { container.innerHTML = '<div class="alert alert-danger">Erro ao carregar dados.</div>'; }
         }
 
         document.getElementById('formRegistro').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const btn = e.target.querySelector('button');
             const htmlOriginal = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
+            // Lógica do Dentista Padrão
+            let dentistaInput = document.getElementById('regDentista').value;
+            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Dra. Emilly";
+
             const dados = {
                 data: document.getElementById('inputData').value,
-                procedimento: document.getElementById('regProc').value, // Agora pega do SELECT
+                procedimento: document.getElementById('regProc').value,
                 paciente: document.getElementById('regPac').value,
                 valor: document.getElementById('regValor').value,
                 pagamento: document.getElementById('regPag').value,
-                tipo: document.getElementById('regTipo').value
+                tipo: document.getElementById('regTipo').value,
+                dentista: dentistaInput
             };
 
             try {
                 const res = await fetch('/api/registros', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(dados)
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dados)
                 });
-
                 if (res.ok) {
-                    // Limpa campos (mantendo data)
                     document.getElementById('regProc').value = '';
                     document.getElementById('regPac').value = '';
                     document.getElementById('regValor').value = '';
+                    document.getElementById('regDentista').value = ''; // Limpa
                     carregarRegistros();
-                } else {
-                    alert("Erro ao salvar.");
-                }
+                } else { alert("Erro ao salvar."); }
             } catch (erro) { alert("Erro de conexão."); }
-
             btn.innerHTML = htmlOriginal;
         });
 
         async function deletarRegistro(data, paciente, procedimento) {
-            if(!confirm("Apagar este registro financeiro?")) return;
-
-            await fetch('/api/registros', {
-                method: 'DELETE',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ data, paciente, procedimento })
-            });
+            if(!confirm("Apagar este registro?")) return;
+            await fetch('/api/registros', { method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ data, paciente, procedimento }) });
             carregarRegistros();
         }
     </script>

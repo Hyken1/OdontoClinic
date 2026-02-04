@@ -9,117 +9,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        :root {
-            --cor-fundo-tela: #c79646;
-            --cor-sidebar: #a67c42;
-            --cor-texto-marrom: #5e4b35;
-        }
+        :root { --cor-fundo-tela: #c79646; --cor-sidebar: #a67c42; --cor-texto-marrom: #5e4b35; }
         body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
 
-        /* Sidebar */
         .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
         .nav-link:hover { background-color: rgba(255,255,255, 0.2); color: white; transform: translateX(5px); }
         .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
         .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
 
-        /* --- GLASSMORPHISM --- */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            min-height: 50vh;
-        }
+        .glass-container { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); min-height: 50vh; }
+        .glass-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.85); border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid var(--cor-sidebar); transition: all 0.3s ease; }
+        .glass-item:hover { background: #fff; transform: translateX(10px) scale(1.01); box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2); }
+        .form-glass { background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-        .glass-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--cor-sidebar);
-            transition: all 0.3s ease;
-        }
+        .time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 10px; }
+        .time-btn { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 8px; text-align: center; font-weight: bold; color: var(--cor-texto-marrom); cursor: pointer; transition: 0.2s; }
+        .time-btn:hover { background: #f0f0f0; transform: scale(1.05); }
+        .time-btn.active { background: var(--cor-sidebar); color: white; border-color: var(--cor-sidebar); box-shadow: 0 4px 10px rgba(166, 124, 66, 0.4); }
+        .time-btn.btn-disabled { background-color: #e9ecef; color: #adb5bd; text-decoration: line-through; cursor: not-allowed; pointer-events: none; border-color: #dee2e6; box-shadow: none !important; transform: none !important; }
 
-        .glass-item:hover {
-            background: #fff;
-            transform: translateX(10px) scale(1.01);
-            box-shadow: 0 10px 20px rgba(166, 124, 66, 0.2);
-        }
-
-        .form-glass {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-
-        /* Botões de Horário (Time Slots) */
-        .time-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .time-btn {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--cor-texto-marrom);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .time-btn:hover {
-            background: #f0f0f0;
-            transform: scale(1.05);
-        }
-
-        .time-btn.active {
-            background: var(--cor-sidebar);
-            color: white;
-            border-color: var(--cor-sidebar);
-            box-shadow: 0 4px 10px rgba(166, 124, 66, 0.4);
-        }
-
-        /* Horário Ocupado/Bloqueado */
-        .time-btn.btn-disabled {
-            background-color: #e9ecef; /* Cinza claro */
-            color: #adb5bd; /* Texto cinza */
-            text-decoration: line-through; /* Riscado */
-            cursor: not-allowed;
-            pointer-events: none; /* O SEGREDO: Impede qualquer clique */
-            border-color: #dee2e6;
-            box-shadow: none !important;
-            transform: none !important;
-        }
-
-        .date-selector-glass {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white; padding: 10px 20px; border-radius: 50px;
-            display: flex; align-items: center; gap: 10px; font-weight: bold;
-        }
-        .date-selector-glass input {
-            background: transparent; border: none; color: white; 
-            font-weight: bold; font-size: 1.1rem; outline: none;
-        }
+        .date-selector-glass { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .date-selector-glass input { background: transparent; border: none; color: white; font-weight: bold; font-size: 1.1rem; outline: none; }
         .date-selector-glass input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block">
@@ -134,24 +49,18 @@
                     <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
                     <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
 
             <main class="col-md-9 col-lg-10 p-4">
-                
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="text-white">
                         <h2 class="fw-bold m-0"><i class="fa-regular fa-calendar-check me-2 opacity-75"></i>Agenda</h2>
                         <small class="opacity-75">Organize seus atendimentos</small>
                     </div>
-                    
                     <div class="date-selector-glass">
                         <i class="fa-regular fa-calendar"></i>
                         <input type="date" id="dataFiltro" onchange="carregarAgenda()">
@@ -169,6 +78,11 @@
                                 <datalist id="sugestoesPacientes"></datalist>
                             </div>
                             
+                            <div class="mb-3">
+                                <label class="small fw-bold text-muted">DENTISTA RESPONSÁVEL</label>
+                                <input type="text" id="agDentista" class="form-control bg-light border-0 py-2" placeholder="Deixe vazio para Dra. Emilly">
+                            </div>
+
                             <div class="mb-3">
                                 <label class="small fw-bold text-muted">PROCEDIMENTO</label>
                                 <select id="agProcedimento" class="form-select bg-light border-0 py-2" required>
@@ -188,16 +102,11 @@
 
                         <div class="col-md-6 ps-md-4">
                             <h5 class="fw-bold mb-3 text-secondary"><i class="fa-regular fa-clock me-2"></i>Selecione o Horário</h5>
-                            
                             <p class="small text-muted mb-2">Manhã</p>
                             <div class="time-grid mb-3" id="gridManha"></div>
-
                             <p class="small text-muted mb-2">Tarde</p>
                             <div class="time-grid" id="gridTarde"></div>
-                            
-                            <div id="feedbackHorario" class="text-danger small mt-2 fw-bold" style="display: none;">
-                                * Selecione um horário acima.
-                            </div>
+                            <div id="feedbackHorario" class="text-danger small mt-2 fw-bold" style="display: none;">* Selecione um horário acima.</div>
                         </div>
                     </div>
                 </form>
@@ -205,13 +114,9 @@
                 <div class="glass-container">
                     <h5 class="text-white mb-4 opacity-75 fw-bold">Compromissos do Dia</h5>
                     <div id="lista-agenda">
-                        <div class="text-center text-white py-5">
-                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                            <p class="mt-2">Carregando horários...</p>
-                        </div>
+                        <div class="text-center text-white py-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2">Carregando...</p></div>
                     </div>
                 </div>
-
             </main>
         </div>
     </div>
@@ -220,7 +125,6 @@
 
     <script>
         document.getElementById('dataFiltro').valueAsDate = new Date();
-        
         const horariosManha = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
         const horariosTarde = ["13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"];
 
@@ -228,23 +132,19 @@
             gerarBotoesHorario();
             carregarAgenda();
             carregarOpcoesProcedimentos();
-            carregarSugestoesPacientes(); // MUDANÇA 3: Chamada da nova função
+            carregarSugestoesPacientes();
         };
 
-        // MUDANÇA 4: Nova função para buscar nomes
         async function carregarSugestoesPacientes() {
             try {
                 const res = await fetch('/api/pacientes');
                 if(!res.ok) return;
-                
                 const pacientes = await res.json();
                 const datalist = document.getElementById('sugestoesPacientes');
-                
-                datalist.innerHTML = ''; // Limpa antes de preencher
-                
+                datalist.innerHTML = ''; 
                 pacientes.forEach(p => {
                     const option = document.createElement('option');
-                    option.value = p.nome; // O valor que aparece na sugestão
+                    option.value = p.nome;
                     datalist.appendChild(option);
                 });
             } catch (e) { console.error("Erro ao carregar sugestões:", e); }
@@ -272,7 +172,6 @@
                 const btn = document.createElement('div');
                 btn.className = 'time-btn';
                 btn.innerText = hora;
-                // Adiciona um ID para encontrarmos fácil depois (ex: btn-08:00)
                 btn.id = `btn-${hora.replace(':', '')}`;
                 btn.onclick = () => selecionarHorario(btn, hora);
                 return btn;
@@ -292,10 +191,9 @@
             const dataSelecionada = document.getElementById('dataFiltro').value;
             const container = document.getElementById('lista-agenda');
             
-            // 1. Limpa seleção anterior ao mudar a data
             document.getElementById('agHoraSelecionada').value = '';
             document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('active', 'btn-disabled'); // Remove bloqueio e seleção
+                btn.classList.remove('active', 'btn-disabled');
                 btn.title = "Disponível";
             });
 
@@ -307,9 +205,7 @@
                 const agendaDia = todos.filter(item => item.data === dataSelecionada);
                 agendaDia.sort((a,b) => a.hora.localeCompare(b.hora));
 
-                // 2. BLOQUEIA HORÁRIOS JÁ AGENDADOS
                 agendaDia.forEach(agendamento => {
-                    // Procura o botão pelo ID que criamos (btn-0800)
                     const idBotao = `btn-${agendamento.hora.replace(':', '')}`;
                     const btn = document.getElementById(idBotao);
                     if (btn) {
@@ -318,15 +214,9 @@
                     }
                 });
 
-                // 3. Renderiza a lista
                 container.innerHTML = '';
                 if (agendaDia.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center text-white py-5 opacity-75">
-                            <i class="fa-regular fa-clock fa-3x mb-3"></i>
-                            <h4>Agenda livre.</h4>
-                            <p>Nenhum paciente marcado para esta data.</p>
-                        </div>`;
+                    container.innerHTML = `<div class="text-center text-white py-5 opacity-75"><i class="fa-regular fa-clock fa-3x mb-3"></i><h4>Agenda livre.</h4></div>`;
                 }
 
                 agendaDia.forEach(item => {
@@ -338,19 +228,19 @@
                                 </div>
                                 <div>
                                     <h5 class="m-0 fw-bold text-dark">${item.paciente}</h5>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">${item.procedimento}</small>
+                                    <div class="d-flex gap-2">
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">${item.procedimento}</small>
+                                        <small class="badge bg-secondary opacity-75" style="font-size: 0.7rem;">${item.dentista}</small>
+                                    </div>
                                 </div>
                             </div>
-                            
                             <button class="btn btn-link text-danger opacity-50 hover-opacity-100" onclick="deletarAgendamento('${item.data}', '${item.hora}')" title="Cancelar">
                                 <i class="fa-solid fa-trash fs-5"></i>
                             </button>
                         </div>
                     `;
                 });
-            } catch (erro) {
-                container.innerHTML = '<div class="alert alert-danger">Erro ao carregar agenda.</div>';
-            }
+            } catch (erro) { container.innerHTML = '<div class="alert alert-danger">Erro ao carregar agenda.</div>'; }
         }
 
         document.getElementById('formAgenda').addEventListener('submit', async (e) => {
@@ -362,11 +252,16 @@
             const original = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
 
+            // Lógica do Dentista Padrão
+            let dentistaInput = document.getElementById('agDentista').value;
+            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Dra. Emilly";
+
             const dados = {
                 data: document.getElementById('dataFiltro').value,
                 hora: hora,
                 paciente: document.getElementById('agPaciente').value,
-                procedimento: document.getElementById('agProcedimento').value
+                procedimento: document.getElementById('agProcedimento').value,
+                dentista: dentistaInput
             };
 
             try {
@@ -375,8 +270,8 @@
                 });
                 carregarAgenda();
                 document.getElementById('agPaciente').value = '';
+                document.getElementById('agDentista').value = ''; // Limpa o campo
                 document.getElementById('agProcedimento').value = '';
-
             } catch (erro) { alert("Erro ao agendar."); }
             btn.innerHTML = original;
         });
@@ -387,7 +282,7 @@
                 await fetch('/api/agenda', {
                     method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ data, hora })
                 });
-                carregarAgenda(); // Ao recarregar, o botão volta a ficar disponível automaticamente
+                carregarAgenda(); 
             } catch (erro) { alert("Erro ao cancelar."); }
         }
     </script>

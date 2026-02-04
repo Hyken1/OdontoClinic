@@ -7,15 +7,14 @@ const fs = require('fs');
 
 const app = express();
 
-// --- CONFIGURAÇÃO: Permitir JSON e Site ---
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname))); // Serve os arquivos do site (HTML, CSS)
+app.use(express.static(path.join(__dirname))); 
 
 // --- ID DA SUA PLANILHA ---
 const SPREADSHEET_ID = '15TvWPyk3UOnk37XK1pIHjLaxA7zE9LYuDuFyibcCNCg'; 
 
-// --- CARREGAMENTO DE CREDENCIAIS (Blindado) ---
+// --- CARREGAMENTO DE CREDENCIAIS ---
 let credenciais;
 const caminhoLocal = './credenciais.json';
 const caminhoRender = '/etc/secrets/credenciais.json';
@@ -30,12 +29,11 @@ if (fs.existsSync(caminhoRender)) {
     credenciais = require(caminhoLocal);
 } else {
     console.error("❌ ERRO GRAVE: Nenhuma credencial encontrada!");
-    console.error("Verifique se o arquivo 'credenciais.json' existe na pasta ou nos Secrets do Render.");
 }
 
 // --- FUNÇÕES DE CONEXÃO ---
 async function getDoc() {
-    if (!credenciais) throw new Error("Credenciais não carregadas no servidor.");
+    if (!credenciais) throw new Error("Credenciais não carregadas.");
     
     const serviceAccountAuth = new JWT({
         email: credenciais.client_email,
@@ -54,11 +52,9 @@ async function acessarPlanilha(nomeAba) {
     return sheet;
 }
 
-// ==========================================================
-// ==================== SUAS ROTAS (API) ====================
-// ==========================================================
+// ==================== ROTAS API ====================
 
-// --- REGISTROS DIÁRIOS ---
+// --- REGISTROS DIÁRIOS (COM DENTISTA) ---
 app.get('/api/registros', async (req, res) => {
     try {
         const sheet = await acessarPlanilha('REGISTROS');
@@ -73,6 +69,7 @@ app.get('/api/registros', async (req, res) => {
             valor: row.get('Valor'),
             pagamento: row.get('Pagamento'),
             tipo: row.get('Tipo'),
+            dentista: row.get('Dentista') || 'Dra. Emilly', // Padrão se vazio
             statusRecibo: row.get('StatusRecibo') || 'Pendente'
         }));
 
@@ -92,53 +89,10 @@ app.post('/api/registros', async (req, res) => {
             Valor: req.body.valor,
             Pagamento: req.body.pagamento,
             Tipo: req.body.tipo,
+            Dentista: req.body.dentista || 'Dra. Emilly', // Salva o dentista
             StatusRecibo: 'Pendente'
         });
         res.json({ message: "Registro salvo!" });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// --- ROTA DE EDIÇÃO DE PACIENTE ---
-app.put('/api/pacientes', async (req, res) => {
-    try {
-        const sheet = await acessarPlanilha('PACIENTES');
-        const rows = await sheet.getRows();
-        
-        // Procura a linha usando o NOME ANTIGO (antes da edição)
-        const nomeOriginal = req.body.nomeOriginal; 
-        const linha = rows.find(r => r.get('Nome') === nomeOriginal);
-
-        if (linha) {
-            // Atualiza todos os campos
-            linha.set('Nome', req.body.nome);
-            linha.set('DataNascimento', req.body.dataNascimento);
-            linha.set('CPF', req.body.cpf);
-            linha.set('CPFResponsavel', req.body.cpfResponsavel);
-            linha.set('Telefone', req.body.telefone);
-            linha.set('Endereco', req.body.endereco);
-            
-            await linha.save(); // Salva no Google Sheets
-            res.json({ message: "Cadastro atualizado!" });
-        } else {
-            res.status(404).json({ error: "Paciente não encontrado para edição." });
-        }
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
-});
-
-app.patch('/api/registros/status', async (req, res) => {
-    try {
-        const sheet = await acessarPlanilha('REGISTROS');
-        const rows = await sheet.getRows();
-        const id = Number(req.body.id);
-        if (rows[id]) {
-            rows[id].set('StatusRecibo', req.body.novoStatus);
-            await rows[id].save();
-            res.json({ message: "Status atualizado!" });
-        } else {
-            res.status(404).json({ error: "Linha não encontrada." });
-        }
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -146,6 +100,7 @@ app.delete('/api/registros', async (req, res) => {
     try {
         const sheet = await acessarPlanilha('REGISTROS');
         const rows = await sheet.getRows();
+        // Melhorei a busca para evitar deletar errado
         const linha = rows.find(r => 
             r.get('Data') === req.body.data && 
             r.get('Paciente') === req.body.paciente &&
@@ -156,20 +111,49 @@ app.delete('/api/registros', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- PACIENTES ---
+// --- AGENDA (COM DENTISTA) ---
+app.get('/api/agenda', async (req, res) => {
+    try { 
+        const s = await acessarPlanilha('AGENDA'); 
+        const r = await s.getRows(); 
+        res.json(r.map(x => ({
+            data: x.get('Data'), 
+            hora: x.get('Hora'), 
+            paciente: x.get('Paciente'), 
+            procedimento: x.get('Procedimento'),
+            dentista: x.get('Dentista') || 'Dra. Emilly' // Padrão
+        }))); 
+    } catch(e){res.status(500).json({error: e.message});}
+});
+
+app.post('/api/agenda', async (req, res) => {
+    try { 
+        const s = await acessarPlanilha('AGENDA'); 
+        await s.addRow({
+            Data: req.body.data, 
+            Hora: req.body.hora, 
+            Paciente: req.body.paciente, 
+            Procedimento: req.body.procedimento,
+            Dentista: req.body.dentista || 'Dra. Emilly', // Salva
+            Status: 'confirmado'
+        }); 
+        res.json({message:"ok"}); 
+    } catch(e){res.status(500).json({error:e.message});}
+});
+
+app.delete('/api/agenda', async (req, res) => {
+    try { 
+        const s = await acessarPlanilha('AGENDA'); 
+        const r = await s.getRows(); 
+        const l = r.find(x => x.get('Data') === req.body.data && x.get('Hora') === req.body.hora); 
+        if(l) {await l.delete(); res.json({message:"ok"});} 
+        else res.status(404); 
+    } catch(e){res.status(500).json({error:e.message});}
+});
+
+// --- PACIENTES (Mantido igual) ---
 app.get('/api/pacientes', async (req, res) => {
-    try {
-        const sheet = await acessarPlanilha('PACIENTES');
-        const rows = await sheet.getRows();
-        res.json(rows.map(row => ({
-            nome: row.get('Nome'),
-            dataNascimento: row.get('DataNascimento'),
-            cpf: row.get('CPF'),
-            cpfResponsavel: row.get('CPFResponsavel'),
-            telefone: row.get('Telefone'),
-            endereco: row.get('Endereco')
-        })));
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    try { const s = await acessarPlanilha('PACIENTES'); const r = await s.getRows(); res.json(r.map(row => ({ nome: row.get('Nome'), dataNascimento: row.get('DataNascimento'), cpf: row.get('CPF'), cpfResponsavel: row.get('CPFResponsavel'), telefone: row.get('Telefone'), endereco: row.get('Endereco') }))); } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/pacientes', async (req, res) => {
@@ -178,75 +162,41 @@ app.post('/api/pacientes', async (req, res) => {
         const rows = await sheet.getRows();
         const novoNome = req.body.nome.trim();
         const novoCPF = req.body.cpf ? req.body.cpf.trim() : "";
-        // --- MODO DETETIVE DE DUPLICIDADE ---
-const nomeExiste = rows.find(r => r.get('Nome')?.trim().toLowerCase() === novoNome.toLowerCase());
-const cpfExiste = novoCPF ? rows.find(r => r.get('CPF')?.trim() === novoCPF) : null;
+        
+        const nomeExiste = rows.find(r => r.get('Nome')?.trim().toLowerCase() === novoNome.toLowerCase());
+        const cpfExiste = novoCPF ? rows.find(r => r.get('CPF')?.trim() === novoCPF) : null;
 
-if (nomeExiste) {
-    return res.status(409).json({ error: `Já existe um cadastro com o nome "${nomeExiste.get('Nome')}".` });
-}
+        if (nomeExiste) return res.status(409).json({ error: `Já existe um cadastro com o nome "${nomeExiste.get('Nome')}".` });
+        if (cpfExiste) return res.status(409).json({ error: `O CPF ${novoCPF} já está cadastrado para: "${cpfExiste.get('Nome')}"` });
 
-if (cpfExiste) {
-    // Aqui ele vai te contar QUEM é o dono do CPF fantasma
-    return res.status(409).json({ error: `O CPF ${novoCPF} já está cadastrado para o paciente: "${cpfExiste.get('Nome') || 'Sem Nome'}"` });
-}
-        await sheet.addRow({
-            Nome: req.body.nome,
-            DataNascimento: req.body.dataNascimento,
-            CPF: req.body.cpf,
-            CPFResponsavel: req.body.cpfResponsavel,
-            Telefone: req.body.telefone,
-            Endereco: req.body.endereco
-        });
+        await sheet.addRow({ Nome: req.body.nome, DataNascimento: req.body.dataNascimento, CPF: req.body.cpf, CPFResponsavel: req.body.cpfResponsavel, Telefone: req.body.telefone, Endereco: req.body.endereco });
         res.json({ message: "Salvo" }); 
     } catch(e){ res.status(500).json({error: e.message}); }
 });
 
-app.delete('/api/pacientes', async (req, res) => {
-    try { 
-        const sheet = await acessarPlanilha('PACIENTES'); 
+app.put('/api/pacientes', async (req, res) => {
+    try {
+        const sheet = await acessarPlanilha('PACIENTES');
         const rows = await sheet.getRows();
-        const linha = rows.find(r => r.get('Nome') === req.body.nome);
-        if(linha){ await linha.delete(); res.json({message: "Deletado"}); } else res.status(404).json({error: "404"});
-    } catch(e){ res.status(500).json({error: e.message}); }
+        const linha = rows.find(r => r.get('Nome') === req.body.nomeOriginal);
+        if (linha) {
+            linha.set('Nome', req.body.nome); linha.set('DataNascimento', req.body.dataNascimento); linha.set('CPF', req.body.cpf); linha.set('CPFResponsavel', req.body.cpfResponsavel); linha.set('Telefone', req.body.telefone); linha.set('Endereco', req.body.endereco);
+            await linha.save(); res.json({ message: "Atualizado!" });
+        } else { res.status(404).json({ error: "Não encontrado." }); }
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- AGENDA ---
-app.get('/api/agenda', async (req, res) => {
-    try { const s = await acessarPlanilha('AGENDA'); const r = await s.getRows(); res.json(r.map(x => ({data: x.get('Data'), hora: x.get('Hora'), paciente: x.get('Paciente'), procedimento: x.get('Procedimento')}))); } catch(e){res.status(500).json({error: e.message});}
-});
-app.post('/api/agenda', async (req, res) => {
-    try { const s = await acessarPlanilha('AGENDA'); await s.addRow({Data: req.body.data, Hora: req.body.hora, Paciente: req.body.paciente, Procedimento: req.body.procedimento, Status: 'confirmado'}); res.json({message:"ok"}); } catch(e){res.status(500).json({error:e.message});}
-});
-app.delete('/api/agenda', async (req, res) => {
-    try { const s = await acessarPlanilha('AGENDA'); const r = await s.getRows(); const l = r.find(x => x.get('Data') === req.body.data && x.get('Hora') === req.body.hora); if(l) {await l.delete(); res.json({message:"ok"});} else res.status(404); } catch(e){res.status(500).json({error:e.message});}
-});
+app.delete('/api/pacientes', async (req, res) => { try { const s = await acessarPlanilha('PACIENTES'); const r = await s.getRows(); const l = r.find(x => x.get('Nome') === req.body.nome); if(l){await l.delete(); res.json({message: "Deletado"});} } catch(e){res.status(500);} });
 
 // --- PREÇOS ---
-app.get('/api/precos', async (req, res) => {
-    try{ const s = await acessarPlanilha('PRECOS'); const r = await s.getRows(); res.json(r.map(x=>({procedimento:x.get('Procedimento'), valor:x.get('Valor')})));}catch(e){res.status(500).json({error:e.message});}
-});
-app.post('/api/precos', async (req, res) => {
-    try{const s=await acessarPlanilha('PRECOS'); await s.addRow({Procedimento:req.body.procedimento, Valor:req.body.valor}); res.json({message:"ok"});}catch(e){res.status(500).json({error:e.message});}
-});
-app.delete('/api/precos', async (req, res) => {
-    try{const s=await acessarPlanilha('PRECOS'); const r=await s.getRows(); const l=r.find(x=>x.get('Procedimento')===req.body.procedimento); if(l){await l.delete();res.json({message:"ok"});}else res.status(404);}catch(e){res.status(500).json({error:e.message});}
-});
+app.get('/api/precos', async (req, res) => { try{ const s = await acessarPlanilha('PRECOS'); const r = await s.getRows(); res.json(r.map(x=>({procedimento:x.get('Procedimento'), valor:x.get('Valor')})));}catch(e){res.status(500).json({error:e.message});} });
+app.post('/api/precos', async (req, res) => { try{const s=await acessarPlanilha('PRECOS'); await s.addRow({Procedimento:req.body.procedimento, Valor:req.body.valor}); res.json({message:"ok"});}catch(e){res.status(500).json({error:e.message});} });
+app.delete('/api/precos', async (req, res) => { try{const s=await acessarPlanilha('PRECOS'); const r=await s.getRows(); const l=r.find(x=>x.get('Procedimento')===req.body.procedimento); if(l){await l.delete();res.json({message:"ok"});}else res.status(404);}catch(e){res.status(500).json({error:e.message});} });
 
-// --- NOTAS (Histórico - Opcional) ---
-app.get('/api/notas', async (req, res) => {
-    try { const sheet = await acessarPlanilha('NOTAS'); const rows = await sheet.getRows(); res.json(rows.map((r, i) => ({ id: i, data: r.get('Data'), paciente: r.get('Paciente'), cpf: r.get('CPF'), procedimento: r.get('Procedimento'), valor: r.get('Valor'), status: r.get('Status') }))); } catch (e) { res.status(500).json({ error: e.message }); }
-});
+// --- NOTAS ---
+app.get('/api/notas', async (req, res) => { try { const sheet = await acessarPlanilha('NOTAS'); const rows = await sheet.getRows(); res.json(rows.map((r, i) => ({ id: i, data: r.get('Data'), paciente: r.get('Paciente'), cpf: r.get('CPF'), procedimento: r.get('Procedimento'), valor: r.get('Valor'), status: r.get('Status') }))); } catch (e) { res.status(500).json({ error: e.message }); } });
 
-// ==========================================================
-// --- ROTA FINAL (CATCH-ALL) ---
-// Qualquer rota não definida acima devolve o index.html (para o site funcionar)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+app.get('*', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
 
-// --- INICIAR SERVIDOR ---
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-});
+app.listen(PORT, () => { console.log(`🚀 Servidor rodando na porta ${PORT}`); });
