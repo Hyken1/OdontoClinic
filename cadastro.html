@@ -12,7 +12,7 @@
         :root {
             --cor-fundo-tela: #c79646;
             --cor-sidebar: #a67c42;
-            --cor-texto-marrom: #070401;
+            --cor-texto-marrom: #5e4b35;
         }
         body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
 
@@ -140,7 +140,7 @@
 
                         <div class="mb-3">
                             <label class="fw-bold small">Nome Completo</label>
-                            <input type="text" id="cadNome" class="form-control" required>
+                            <input type="text" id="cadNome" class="form-control" required onblur="capitalizarNome(this)">
                         </div>
 
                         <div class="row">
@@ -166,10 +166,10 @@
                         
                         <div class="mb-3">
                             <label class="fw-bold small">Telefone</label>
-                            <input type="text" id="cadTel" class="form-control" placeholder="(00) 00000-0000">
+                            <input type="text" id="cadTel" class="form-control" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTelefone(this)">
                         </div>
                         <div class="mb-3">
-                            <label class="fw-bold small">Endereço</label>
+                            <label class="fw-bold small">Endereço Completo</label>
                             <input type="text" id="cadEndereco" class="form-control" placeholder="Rua, Número, Bairro...">
                         </div>
                         
@@ -220,17 +220,34 @@
             modalCadastroInstance = new bootstrap.Modal(document.getElementById('modalNovoPaciente'));
         };
 
-        // --- MÁSCARA DE CPF ---
-        function aplicarMascaraCPF(input) {
-            let v = input.value;
-            v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
-            v = v.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o terceiro e o quarto dígitos
-            v = v.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o terceiro e o quarto dígitos de novo (para o segundo bloco)
-            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca um hífen entre o terceiro e o quarto dígitos
+        // --- NOVIDADE 1: MÁSCARA TELEFONE ---
+        function mascaraTelefone(input) {
+            let v = input.value.replace(/\D/g, ""); // Remove tudo que não é dígito
+            v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); // Coloca parênteses no DDD
+            v = v.replace(/(\d)(\d{4})$/, "$1-$2"); // Coloca o hífen antes dos últimos 4 dígitos
             input.value = v;
         }
 
-        // --- LÓGICA DE IDADE ---
+        // --- NOVIDADE 2: CAPITALIZAR NOME ---
+        function capitalizarNome(input) {
+            let palavras = input.value.toLowerCase().split(' ');
+            for (let i = 0; i < palavras.length; i++) {
+                // Não capitaliza 'de', 'da', 'do', 'dos', 'das' se não for a primeira palavra
+                if (['de', 'da', 'do', 'dos', 'das', 'e'].includes(palavras[i]) && i !== 0) continue;
+                palavras[i] = palavras[i].charAt(0).toUpperCase() + palavras[i].slice(1);
+            }
+            input.value = palavras.join(' ');
+        }
+
+        // --- MÁSCARA DE CPF ---
+        function aplicarMascaraCPF(input) {
+            let v = input.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            input.value = v;
+        }
+
         function verificarIdade() {
             const dataNasc = document.getElementById('cadNascimento').value;
             if (!dataNasc) return;
@@ -241,7 +258,6 @@
             const m = hoje.getMonth() - nascimento.getMonth();
             if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
 
-            // Atualiza UI
             const badge = document.getElementById('labelIdade');
             badge.innerText = `${idade} anos`;
             const boxResp = document.getElementById('boxResponsavel');
@@ -260,7 +276,7 @@
 
         async function carregarPacientes() {
             try {
-                const res = await fetch('/api/pacientes'); // Link relativo para funcionar na nuvem
+                const res = await fetch('/api/pacientes');
                 if (!res.ok) throw new Error("Erro API");
                 pacientesCache = await res.json();
                 renderizarLista(pacientesCache);
@@ -327,8 +343,6 @@
             });
         }
 
-        // --- FUNÇÕES DE CADASTRO E EDIÇÃO ---
-
         function abrirModalNovo() {
             document.getElementById('formPaciente').reset();
             document.getElementById('nomeOriginal').value = ''; 
@@ -361,9 +375,13 @@
             
             const nomeOriginal = document.getElementById('nomeOriginal').value;
             
+            // Força a capitalização uma última vez antes de salvar, caso o usuário tenha colado o texto
+            const inputNome = document.getElementById('cadNome');
+            capitalizarNome(inputNome);
+
             const dados = {
                 nomeOriginal: nomeOriginal,
-                nome: document.getElementById('cadNome').value,
+                nome: inputNome.value,
                 dataNascimento: document.getElementById('cadNascimento').value,
                 cpf: document.getElementById('cadCPF').value,
                 cpfResponsavel: document.getElementById('cadCPFResp').value,
