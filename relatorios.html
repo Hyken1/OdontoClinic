@@ -37,9 +37,10 @@
         .valor-clinica { color: #198754; font-weight: bold; } /* Verde para lucro */
         .valor-dentista { color: #0d6efd; font-weight: bold; } /* Azul para pagamento */
 
-        .filtro-glass { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 50px; padding: 5px 15px; font-weight: bold; }
-        .filtro-glass select { background: transparent; border: none; color: white; font-weight: bold; outline: none; }
+        .filtro-glass { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 50px; padding: 5px 15px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .filtro-glass select { background: transparent; border: none; color: white; font-weight: bold; outline: none; cursor: pointer; }
         .filtro-glass select option { color: #333; }
+        .divisor-filtro { height: 20px; width: 1px; background: rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
@@ -73,9 +74,15 @@
                     </div>
                     
                     <div class="filtro-glass">
-                        <i class="fa-regular fa-calendar me-2"></i>
-                        Mês: 
-                        <select id="filtroMes" onchange="gerarRelatorio()">
+                        <i class="fa-regular fa-calendar"></i>
+                        <select id="filtroMes" onchange="atualizarSemanasEGerar()">
+                            </select>
+                        
+                        <div class="divisor-filtro"></div>
+                        
+                        <i class="fa-solid fa-filter"></i>
+                        <select id="filtroSemana" onchange="gerarRelatorio()">
+                            <option value="todas">Mês Completo</option>
                             </select>
                     </div>
                 </div>
@@ -126,10 +133,9 @@
     <script>
         let meuGrafico = null;
 
-        // --- INICIALIZAÇÃO ---
         window.onload = function() {
             preencherSelectMeses();
-            gerarRelatorio();
+            atualizarSemanasEGerar();
         };
 
         function preencherSelectMeses() {
@@ -137,38 +143,83 @@
             const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
             const hoje = new Date();
             
-            // Adiciona os últimos 12 meses
             for (let i = 0; i < 12; i++) {
                 const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                const valor = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; // Formato YYYY-MM
+                const valor = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
                 const texto = `${meses[d.getMonth()]} ${d.getFullYear()}`;
                 
                 const opt = document.createElement('option');
                 opt.value = valor;
                 opt.innerText = texto;
-                if (i === 0) opt.selected = true; // Seleciona o mês atual
+                if (i === 0) opt.selected = true;
                 select.appendChild(opt);
             }
         }
 
-        // --- LÓGICA PRINCIPAL ---
+        // --- NOVA LÓGICA: GERA AS SEMANAS DO MÊS ---
+        function atualizarSemanasEGerar() {
+            const selectMes = document.getElementById('filtroMes');
+            const selectSemana = document.getElementById('filtroSemana');
+            const [ano, mes] = selectMes.value.split('-').map(Number);
+            
+            // Limpa opções antigas, mantém "Mês Completo"
+            selectSemana.innerHTML = '<option value="todas">Mês Completo</option>';
+            
+            const ultimoDia = new Date(ano, mes, 0).getDate();
+            let currentDate = new Date(ano, mes - 1, 1);
+            let weekCount = 1;
+            
+            // Loop para criar as semanas do calendário
+            while (currentDate.getDate() <= ultimoDia && currentDate.getMonth() === mes - 1) {
+                const diaAtual = currentDate.getDate();
+                const diaSemana = currentDate.getDay(); // 0 (Domingo) a 6 (Sábado)
+                const diasAteSabado = 6 - diaSemana;
+                
+                let fimSemana = diaAtual + diasAteSabado;
+                if (fimSemana > ultimoDia) fimSemana = ultimoDia;
+                
+                // Cria a opção
+                const opt = document.createElement('option');
+                opt.value = `${diaAtual}-${fimSemana}`;
+                opt.innerText = `Semana ${weekCount} (${String(diaAtual).padStart(2,'0')} a ${String(fimSemana).padStart(2,'0')})`;
+                selectSemana.appendChild(opt);
+                
+                // Avança para a próxima semana (domingo)
+                currentDate.setDate(fimSemana + 1);
+                weekCount++;
+            }
+            
+            // Gera o relatório (padrão Mês Completo)
+            gerarRelatorio();
+        }
+
         async function gerarRelatorio() {
-            const mesAnoSelecionado = document.getElementById('filtroMes').value; // Ex: "2026-02"
+            const mesAnoSelecionado = document.getElementById('filtroMes').value; 
+            const semanaSelecionada = document.getElementById('filtroSemana').value;
             
             try {
-                // Busca TODOS os registros (sem filtro de data específica na API, filtramos aqui pelo mês)
                 const res = await fetch('/api/registros');
                 const todosRegistros = await res.json();
 
-                // Filtra pelo mês selecionado
-                const registrosMes = todosRegistros.filter(r => r.data.startsWith(mesAnoSelecionado));
+                // 1. Filtra pelo Mês
+                let registrosFiltrados = todosRegistros.filter(r => r.data.startsWith(mesAnoSelecionado));
 
-                calcularTotais(registrosMes);
-                gerarRepasses(registrosMes);
-                atualizarGrafico(registrosMes);
+                // 2. Filtra pela Semana (se não for "todas")
+                if (semanaSelecionada !== 'todas') {
+                    const [diaIni, diaFim] = semanaSelecionada.split('-').map(Number);
+                    registrosFiltrados = registrosFiltrados.filter(r => {
+                        // Extrai o dia da data (YYYY-MM-DD)
+                        const diaRegistro = parseInt(r.data.split('-')[2]);
+                        return diaRegistro >= diaIni && diaRegistro <= diaFim;
+                    });
+                }
+
+                calcularTotais(registrosFiltrados);
+                gerarRepasses(registrosFiltrados);
+                atualizarGrafico(registrosFiltrados);
 
             } catch (erro) {
-                console.error("Erro ao gerar relatório:", erro);
+                console.error("Erro:", erro);
                 alert("Erro ao carregar dados.");
             }
         }
@@ -190,36 +241,27 @@
             document.getElementById('ticketMedio').innerText = formatarMoeda(ticket);
         }
 
-        // --- A MÁGICA DO REPASSE (60/40) ---
         function gerarRepasses(dados) {
             const container = document.getElementById('container-repasses');
             container.innerHTML = '';
 
-            // Agrupa valores por dentista
             const porDentista = {};
             dados.forEach(r => {
-                // Normaliza o nome (remove espaços extras e deixa minusculo para comparar)
                 let nome = r.dentista ? r.dentista.trim() : "Dra. Emilly";
                 if (!porDentista[nome]) porDentista[nome] = 0;
                 porDentista[nome] += parseFloat(r.valor.replace(',', '.'));
             });
 
-            // Se não tiver dados
             if (Object.keys(porDentista).length === 0) {
-                container.innerHTML = '<div class="alert alert-light opacity-75">Nenhum faturamento neste mês.</div>';
+                container.innerHTML = '<div class="alert alert-light opacity-75">Nenhum faturamento no período.</div>';
                 return;
             }
 
-            // Gera os cards
             for (const [dentista, total] of Object.entries(porDentista)) {
-                
-                // Lógica para saber se é DONA ou OUTRO
                 const ehDona = dentista.toLowerCase().includes("emilly");
-                
                 let htmlInterno = '';
 
                 if (ehDona) {
-                    // Se for a dona, fica com 100% (ou não mostra divisão)
                     htmlInterno = `
                         <div class="repasse-total">
                             <small class="text-muted d-block">Faturamento Total</small>
@@ -230,21 +272,18 @@
                         </div>
                     `;
                 } else {
-                    // Se for OUTRO, aplica a regra 60/40
-                    const parteDentista = total * 0.40; // 40%
-                    const parteClinica = total * 0.60;  // 60%
+                    const parteDentista = total * 0.40;
+                    const parteClinica = total * 0.60;
 
                     htmlInterno = `
                         <div class="repasse-total">
                             <small class="text-muted d-block">Produção Total</small>
                             <span class="fs-4 fw-bold text-dark">${formatarMoeda(total)}</span>
                         </div>
-                        
                         <div class="repasse-item">
                             <span class="text-muted">Parte Dentista (40%)</span>
                             <span class="valor-dentista">${formatarMoeda(parteDentista)}</span>
                         </div>
-                        
                         <div class="repasse-item border-0">
                             <span class="text-muted">Parte Clínica (60%)</span>
                             <span class="valor-clinica">${formatarMoeda(parteClinica)}</span>
@@ -254,22 +293,15 @@
 
                 const card = `
                 <div class="card-repasse">
-                    <div class="repasse-header">
-                        <span><i class="fa-solid fa-user-doctor me-2"></i>${dentista}</span>
-                    </div>
-                    <div class="repasse-body">
-                        ${htmlInterno}
-                    </div>
+                    <div class="repasse-header"><span><i class="fa-solid fa-user-doctor me-2"></i>${dentista}</span></div>
+                    <div class="repasse-body">${htmlInterno}</div>
                 </div>`;
-
                 container.innerHTML += card;
             }
         }
 
         function atualizarGrafico(dados) {
             const ctx = document.getElementById('graficoDentistas').getContext('2d');
-            
-            // Agrupa dados
             const nomes = [];
             const valores = [];
             
@@ -285,24 +317,20 @@
                 valores.push(valor);
             }
 
-            // Destroi gráfico anterior se existir
             if (meuGrafico) meuGrafico.destroy();
-
             meuGrafico = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: nomes,
                     datasets: [{
                         data: valores,
-                        backgroundColor: ['#a67c42', '#5e4b35', '#D4BC9A'], // Cores da paleta
+                        backgroundColor: ['#a67c42', '#5e4b35', '#D4BC9A'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: 'white' } }
-                    }
+                    plugins: { legend: { position: 'bottom', labels: { color: 'white' } } }
                 }
             });
         }
