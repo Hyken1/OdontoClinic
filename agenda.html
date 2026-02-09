@@ -32,6 +32,8 @@
         .date-selector-glass { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
         .date-selector-glass input { background: transparent; border: none; color: white; font-weight: bold; font-size: 1.1rem; outline: none; }
         .date-selector-glass input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        
+        .encaixe-box { background: #fff3cd; border: 1px solid #ffeeba; border-radius: 10px; padding: 15px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -80,7 +82,7 @@
                             
                             <div class="mb-3">
                                 <label class="small fw-bold text-muted">DENTISTA RESPONSÁVEL</label>
-                                <input type="text" id="agDentista" class="form-control bg-light border-0 py-2" placeholder="Deixe vazio para Emilly">
+                                <input type="text" id="agDentista" class="form-control bg-light border-0 py-2" placeholder="Deixe vazio para Dra. Emilly">
                             </div>
 
                             <div class="mb-3">
@@ -102,11 +104,23 @@
 
                         <div class="col-md-6 ps-md-4">
                             <h5 class="fw-bold mb-3 text-secondary"><i class="fa-regular fa-clock me-2"></i>Selecione o Horário</h5>
+                            
                             <p class="small text-muted mb-2">Manhã</p>
                             <div class="time-grid mb-3" id="gridManha"></div>
+                            
                             <p class="small text-muted mb-2">Tarde</p>
                             <div class="time-grid" id="gridTarde"></div>
-                            <div id="feedbackHorario" class="text-danger small mt-2 fw-bold" style="display: none;">* Selecione um horário acima.</div>
+
+                            <div class="encaixe-box">
+                                <label class="small fw-bold text-warning mb-1"><i class="fa-solid fa-bolt me-1"></i>Encaixe / Horário Personalizado</label>
+                                <div class="d-flex gap-2">
+                                    <input type="time" id="inputEncaixe" class="form-control" onchange="selecionarEncaixe()">
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="document.getElementById('inputEncaixe').value=''; resetarSelecao()">Limpar</button>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.75rem;">Use este campo para horários fora do padrão.</small>
+                            </div>
+
+                            <div id="feedbackHorario" class="text-danger small mt-2 fw-bold" style="display: none;">* Selecione um horário ou digite um encaixe.</div>
                         </div>
                     </div>
                 </form>
@@ -180,11 +194,33 @@
             horariosTarde.forEach(h => divTarde.appendChild(criarBotao(h)));
         }
 
+        // --- SELEÇÃO DE HORÁRIO ---
         function selecionarHorario(elemento, hora) {
+            // Limpa o campo de encaixe manual
+            document.getElementById('inputEncaixe').value = '';
+            
             document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
             elemento.classList.add('active');
             document.getElementById('agHoraSelecionada').value = hora;
             document.getElementById('feedbackHorario').style.display = 'none';
+        }
+
+        // --- NOVA FUNÇÃO: ENCAIXE ---
+        function selecionarEncaixe() {
+            const horaManual = document.getElementById('inputEncaixe').value;
+            if (horaManual) {
+                // Remove seleção dos botões
+                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                
+                // Define o horário selecionado como o manual
+                document.getElementById('agHoraSelecionada').value = horaManual;
+                document.getElementById('feedbackHorario').style.display = 'none';
+            }
+        }
+
+        function resetarSelecao() {
+            document.getElementById('agHoraSelecionada').value = '';
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
         }
 
         async function carregarAgenda() {
@@ -192,6 +228,8 @@
             const container = document.getElementById('lista-agenda');
             
             document.getElementById('agHoraSelecionada').value = '';
+            document.getElementById('inputEncaixe').value = ''; // Limpa encaixe ao trocar dia
+            
             document.querySelectorAll('.time-btn').forEach(btn => {
                 btn.classList.remove('active', 'btn-disabled');
                 btn.title = "Disponível";
@@ -220,6 +258,10 @@
                 }
 
                 agendaDia.forEach(item => {
+                    // Verifica se o horário é um encaixe (não está na lista padrão)
+                    const ehEncaixe = !horariosManha.includes(item.hora) && !horariosTarde.includes(item.hora);
+                    const badgeEncaixe = ehEncaixe ? '<span class="badge bg-warning text-dark ms-2" style="font-size: 0.6rem;">ENCAIXE</span>' : '';
+
                     container.innerHTML += `
                         <div class="glass-item">
                             <div class="d-flex align-items-center gap-4">
@@ -227,7 +269,9 @@
                                     <i class="fa-regular fa-clock me-2 text-muted"></i>${item.hora}
                                 </div>
                                 <div>
-                                    <h5 class="m-0 fw-bold text-dark">${item.paciente}</h5>
+                                    <h5 class="m-0 fw-bold text-dark">
+                                        ${item.paciente} ${badgeEncaixe}
+                                    </h5>
                                     <div class="d-flex gap-2">
                                         <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">${item.procedimento}</small>
                                         <small class="badge bg-secondary opacity-75" style="font-size: 0.7rem;">${item.dentista}</small>
@@ -252,9 +296,8 @@
             const original = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
 
-            // Lógica do Dentista Padrão
             let dentistaInput = document.getElementById('agDentista').value;
-            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Emilly";
+            if(!dentistaInput || dentistaInput.trim() === "") dentistaInput = "Dra. Emilly";
 
             const dados = {
                 data: document.getElementById('dataFiltro').value,
@@ -270,8 +313,9 @@
                 });
                 carregarAgenda();
                 document.getElementById('agPaciente').value = '';
-                document.getElementById('agDentista').value = ''; // Limpa o campo
+                document.getElementById('agDentista').value = ''; 
                 document.getElementById('agProcedimento').value = '';
+                document.getElementById('inputEncaixe').value = ''; // Limpa campo de encaixe
             } catch (erro) { alert("Erro ao agendar."); }
             btn.innerHTML = original;
         });
