@@ -83,22 +83,13 @@
                 <h2 class="fw-bold text-white mb-4"><i class="fa-solid fa-chart-line me-2 opacity-75"></i>Visão Geral</h2>
 
                 <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="glass-card">
-                            <span class="stat-label">Faturamento (Mês)</span>
-                            <div class="stat-value" id="fatMes">R$ 0,00</div>
-                            <small class="text-success fw-bold"><i class="fa-solid fa-arrow-trend-up"></i> Atualizado hoje</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="glass-card" style="border-left-color: #0dcaf0;">
+                    <div class="col-md-6"> <div class="glass-card" style="border-left-color: #0dcaf0;">
                             <span class="stat-label">Atendimentos (Mês)</span>
                             <div class="stat-value" id="atendMes">0</div>
                             <small class="text-info fw-bold">Pacientes atendidos</small>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="glass-card" style="border-left-color: #ffc107;">
+                    <div class="col-md-6"> <div class="glass-card" style="border-left-color: #ffc107;">
                             <span class="stat-label">Total Pacientes</span>
                             <div class="stat-value" id="totalPac">0</div>
                             <small class="text-warning fw-bold">Base de cadastro</small>
@@ -162,22 +153,18 @@
                 const mesAtual = hoje.getMonth();
                 const anoAtual = hoje.getFullYear();
 
-                let faturamento = 0;
                 let atendimentos = 0;
 
                 registros.forEach(r => {
-                    // Converter "YYYY-MM-DD" para data
                     const [ano, mes, dia] = r.data.split('-');
-                    // Mês no JS começa em 0 (Jan=0, Dez=11), então subtraímos 1 se vier 01-12
                     const dataReg = new Date(ano, mes - 1, dia);
 
                     if (dataReg.getMonth() === mesAtual && dataReg.getFullYear() === anoAtual) {
                         atendimentos++;
-                        faturamento += parseFloat(r.valor.replace(',', '.'));
                     }
                 });
 
-                document.getElementById('fatMes').innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                
                 document.getElementById('atendMes').innerText = atendimentos;
 
             } catch (erro) {
@@ -199,7 +186,6 @@
                 // 1. Encontrar última manutenção de cada paciente nos registros passados
                 registros.forEach(r => {
                     const proc = r.procedimento.toLowerCase();
-                    // Verifica se o procedimento tem "manutenção" ou "manutencao"
                     if(proc.includes('manutenção') || proc.includes('manutencao')) {
                         const dataReg = new Date(r.data + 'T00:00:00'); // Força timezone local
                         
@@ -218,7 +204,6 @@
                 let encontrouAlerta = false;
 
                 for (const [nome, dataUltima] of Object.entries(pacientesOrto)) {
-                    // Diferença em dias
                     const diffTempo = hoje - dataUltima;
                     const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24)); 
 
@@ -226,13 +211,11 @@
                         // 3. Checar se JÁ está na agenda futura (para não avisar à toa)
                         const jaAgendado = agenda.find(a => {
                             const dataAg = new Date(a.data + 'T00:00:00');
-                            // Verifica se é o mesmo paciente E se a data é hoje ou futuro
                             return a.paciente.toLowerCase() === nome.toLowerCase() && dataAg >= hoje;
                         });
 
                         if(!jaAgendado) {
                             encontrouAlerta = true;
-                            // Formata data para exibir
                             const dataFormatada = dataUltima.toLocaleDateString('pt-BR');
                             
                             containerAlertas.innerHTML += `
