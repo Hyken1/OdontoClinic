@@ -10,8 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        :root { --cor-fundo-tela: #c79646; --cor-sidebar: #a67c42; --cor-texto-marrom: #5e4b35; }
-        body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        :root { 
+            --cor-fundo-tela: #c79646; 
+            --cor-sidebar: #a67c42; 
+            --cor-texto-marrom: #5e4b35; 
+        }
+        body { 
+            background-color: var(--cor-fundo-tela); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow-x: hidden; 
+        }
 
         .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
@@ -21,21 +29,19 @@
 
         .glass-container { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); margin-bottom: 30px; }
         
-        /* Cards de Resumo */
         .card-resumo { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 20px; border-left: 5px solid var(--cor-sidebar); box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; }
         .card-resumo:hover { transform: translateY(-5px); }
         .resumo-titulo { font-size: 0.9rem; color: #666; font-weight: bold; text-transform: uppercase; }
         .resumo-valor { font-size: 1.8rem; color: var(--cor-texto-marrom); font-weight: 800; }
         
-        /* Card de Repasse (Destaque) */
         .card-repasse { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .repasse-header { background: var(--cor-sidebar); color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .repasse-body { padding: 20px; }
         .repasse-item { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #eee; }
         .repasse-total { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         
-        .valor-clinica { color: #198754; font-weight: bold; } /* Verde para lucro */
-        .valor-dentista { color: #0d6efd; font-weight: bold; } /* Azul para pagamento */
+        .valor-clinica { color: #198754; font-weight: bold; } 
+        .valor-dentista { color: #0d6efd; font-weight: bold; } 
 
         .filtro-glass { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); color: white; border-radius: 50px; padding: 5px 15px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
         .filtro-glass select { background: transparent; border: none; color: white; font-weight: bold; outline: none; cursor: pointer; }
@@ -58,8 +64,8 @@
                     <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
                     <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
-                    <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
                     <li class="nav-item"><a class="nav-link" href="notas.html"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
                     <li class="nav-item mt-5"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
@@ -77,13 +83,11 @@
                         <i class="fa-regular fa-calendar"></i>
                         <select id="filtroMes" onchange="atualizarSemanasEGerar()">
                             </select>
-                        
                         <div class="divisor-filtro"></div>
-                        
                         <i class="fa-solid fa-filter"></i>
                         <select id="filtroSemana" onchange="gerarRelatorio()">
                             <option value="todas">Mês Completo</option>
-                            </select>
+                        </select>
                     </div>
                 </div>
 
@@ -96,13 +100,13 @@
                     </div>
                     <div class="col-md-4">
                         <div class="card-resumo" style="border-left-color: #0d6efd;">
-                            <div class="resumo-titulo">Atendimentos</div>
+                            <div class="resumo-titulo">Atendimentos Pagos</div>
                             <div class="resumo-valor" id="totalAtendimentos">0</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card-resumo" style="border-left-color: #198754;">
-                            <div class="resumo-titulo">Ticket Médio</div>
+                            <div class="resumo-titulo">Ticket Médio (Real)</div>
                             <div class="resumo-valor" id="ticketMedio">R$ 0,00</div>
                         </div>
                     </div>
@@ -118,7 +122,7 @@
 
                     <div class="col-lg-7">
                         <div class="glass-container h-100">
-                            <h5 class="text-white fw-bold mb-3 opacity-75">Desempenho por Profissional</h5>
+                            <h5 class="text-white fw-bold mb-3 opacity-75">Faturamento por Profissional</h5>
                             <canvas id="graficoDentistas"></canvas>
                         </div>
                     </div>
@@ -127,8 +131,6 @@
             </main>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         let meuGrafico = null;
@@ -145,51 +147,45 @@
             
             for (let i = 0; i < 12; i++) {
                 const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                const valor = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const valor = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; 
                 const texto = `${meses[d.getMonth()]} ${d.getFullYear()}`;
                 
                 const opt = document.createElement('option');
                 opt.value = valor;
                 opt.innerText = texto;
-                if (i === 0) opt.selected = true;
+                if (i === 0) opt.selected = true; 
                 select.appendChild(opt);
             }
         }
 
-        // --- NOVA LÓGICA: GERA AS SEMANAS DO MÊS ---
         function atualizarSemanasEGerar() {
             const selectMes = document.getElementById('filtroMes');
             const selectSemana = document.getElementById('filtroSemana');
             const [ano, mes] = selectMes.value.split('-').map(Number);
             
-            // Limpa opções antigas, mantém "Mês Completo"
             selectSemana.innerHTML = '<option value="todas">Mês Completo</option>';
             
             const ultimoDia = new Date(ano, mes, 0).getDate();
             let currentDate = new Date(ano, mes - 1, 1);
             let weekCount = 1;
             
-            // Loop para criar as semanas do calendário
             while (currentDate.getDate() <= ultimoDia && currentDate.getMonth() === mes - 1) {
                 const diaAtual = currentDate.getDate();
-                const diaSemana = currentDate.getDay(); // 0 (Domingo) a 6 (Sábado)
+                const diaSemana = currentDate.getDay(); 
                 const diasAteSabado = 6 - diaSemana;
                 
                 let fimSemana = diaAtual + diasAteSabado;
                 if (fimSemana > ultimoDia) fimSemana = ultimoDia;
                 
-                // Cria a opção
                 const opt = document.createElement('option');
                 opt.value = `${diaAtual}-${fimSemana}`;
                 opt.innerText = `Semana ${weekCount} (${String(diaAtual).padStart(2,'0')} a ${String(fimSemana).padStart(2,'0')})`;
                 selectSemana.appendChild(opt);
                 
-                // Avança para a próxima semana (domingo)
                 currentDate.setDate(fimSemana + 1);
                 weekCount++;
             }
             
-            // Gera o relatório (padrão Mês Completo)
             gerarRelatorio();
         }
 
@@ -199,20 +195,27 @@
             
             try {
                 const res = await fetch('/api/registros');
+                if (!res.ok) throw new Error("Erro de conexão");
                 const todosRegistros = await res.json();
 
                 // 1. Filtra pelo Mês
-                let registrosFiltrados = todosRegistros.filter(r => r.data.startsWith(mesAnoSelecionado));
+                let registrosFiltrados = todosRegistros.filter(r => r.data && r.data.startsWith(mesAnoSelecionado));
 
-                // 2. Filtra pela Semana (se não for "todas")
+                // 2. Filtra pela Semana
                 if (semanaSelecionada !== 'todas') {
                     const [diaIni, diaFim] = semanaSelecionada.split('-').map(Number);
                     registrosFiltrados = registrosFiltrados.filter(r => {
-                        // Extrai o dia da data (YYYY-MM-DD)
                         const diaRegistro = parseInt(r.data.split('-')[2]);
                         return diaRegistro >= diaIni && diaRegistro <= diaFim;
                     });
                 }
+
+                // 3. A MÁGICA DE LIMPEZA: Ignorar atendimentos com R$ 0,00
+                registrosFiltrados = registrosFiltrados.filter(r => {
+                    const valorString = r.valor ? r.valor.toString() : "0";
+                    const valorNum = parseFloat(valorString.replace(',', '.'));
+                    return !isNaN(valorNum) && valorNum > 0;
+                });
 
                 calcularTotais(registrosFiltrados);
                 gerarRepasses(registrosFiltrados);
@@ -220,7 +223,7 @@
 
             } catch (erro) {
                 console.error("Erro:", erro);
-                alert("Erro ao carregar dados.");
+                document.getElementById('container-repasses').innerHTML = '<div class="alert alert-danger opacity-75">Erro ao carregar dados.</div>';
             }
         }
 
@@ -231,7 +234,8 @@
         function calcularTotais(dados) {
             let total = 0;
             dados.forEach(r => {
-                total += parseFloat(r.valor.replace(',', '.'));
+                const valor = parseFloat(r.valor.replace(',', '.'));
+                if (!isNaN(valor)) total += valor;
             });
 
             document.getElementById('totalGeral').innerText = formatarMoeda(total);
@@ -247,13 +251,15 @@
 
             const porDentista = {};
             dados.forEach(r => {
-                let nome = r.dentista ? r.dentista.trim() : "Dra. Emilly";
+                let nome = (r.dentista && r.dentista.trim() !== '') ? r.dentista.trim() : "Dra. Emilly";
                 if (!porDentista[nome]) porDentista[nome] = 0;
-                porDentista[nome] += parseFloat(r.valor.replace(',', '.'));
+                
+                const valor = parseFloat(r.valor.replace(',', '.'));
+                if (!isNaN(valor)) porDentista[nome] += valor;
             });
 
             if (Object.keys(porDentista).length === 0) {
-                container.innerHTML = '<div class="alert alert-light opacity-75">Nenhum faturamento no período.</div>';
+                container.innerHTML = '<div class="alert alert-light opacity-75">Nenhum faturamento no período selecionado.</div>';
                 return;
             }
 
@@ -307,9 +313,11 @@
             
             const porDentista = {};
             dados.forEach(r => {
-                let nome = r.dentista ? r.dentista.trim() : "Dra. Emilly";
+                let nome = (r.dentista && r.dentista.trim() !== '') ? r.dentista.trim() : "Dra. Emilly";
                 if (!porDentista[nome]) porDentista[nome] = 0;
-                porDentista[nome] += parseFloat(r.valor.replace(',', '.'));
+                
+                const valor = parseFloat(r.valor.replace(',', '.'));
+                if (!isNaN(valor)) porDentista[nome] += valor;
             });
 
             for (const [nome, valor] of Object.entries(porDentista)) {
