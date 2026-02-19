@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recibos - OdontoClinic</title>
+    <title>Controle de Recibos - OdontoClinic</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -14,39 +14,85 @@
             --cor-sidebar: #a67c42;
             --cor-texto-marrom: #5e4b35;
         }
-        body { background-color: var(--cor-fundo-tela); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        
+        
+        body { 
+            background-color: var(--cor-fundo-tela); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow-x: hidden; 
+        }
 
-        /* Sidebar */
         .sidebar { background-color: var(--cor-sidebar); min-height: 100vh; color: white; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .nav-link { color: rgba(255,255,255, 0.8); font-size: 1.1rem; margin-bottom: 15px; border-radius: 10px; padding: 12px 20px; transition: all 0.3s; }
         .nav-link:hover { background-color: rgba(255,255,255, 0.2); color: white; transform: translateX(5px); }
         .nav-link.active { background-color: rgba(255,255,255, 0.25); color: white; font-weight: bold; }
         .nav-link i { margin-right: 10px; width: 25px; text-align: center; }
 
-        /* Glassmorphism Container */
-        .glass-container {
+        /* Glassmorphism */
+        .glass-panel {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            min-height: 70vh;
+            min-height: 80vh;
         }
 
         .glass-item {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px 20px; 
             margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
             border-left: 6px solid var(--cor-sidebar);
-            transition: all 0.3s ease;
+            transition: 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 100%; 
+        }
+        .glass-item:hover { background: white; transform: scale(1.005); }
+
+        /* Botão de Status */
+        .status-btn {
+            cursor: pointer; 
+            padding: 8px 15px; 
+            border-radius: 50px; 
+            font-size: 0.85rem; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            border: 2px solid transparent; 
+            user-select: none;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s ease;
+            width: 130px; 
+            justify-content: center;
         }
 
-        .label-topo { font-size: 0.75rem; font-weight: bold; color: #a67c42; text-transform: uppercase; margin-bottom: 5px; }
-        .cpf-badge { background: #f0f0f0; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; color: #666; }
-        .valor-recibo { color: #198754; font-weight: bold; }
+        .status-pendente { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+        .status-pendente:hover { background-color: #ffe8a1; }
+
+        .status-emitido { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
+        .status-emitido:hover { background-color: #c1d6cc; }
+        
+        .check-icon { font-size: 1.1rem; }
+
+        /* CPF Destacado */
+        .cpf-tag {
+            background-color: #f8f9fa; border: 1px solid #dee2e6;
+            padding: 4px 10px; border-radius: 8px; font-weight: bold;
+            color: #0e000079; display: inline-block; margin-top: 5px;
+            font-size: 0.95rem; letter-spacing: 0.5px;
+        }
+        .cpf-missing {
+            background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; font-size: 0.85rem;
+        }
+
+        .search-glass {
+            background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255,255,255,0.5); color: #5e4b35; max-width: 300px;
+        }
+
+        /* Fix para linhas do bootstrap dentro do glass */
+        .row-fix { margin-left: 0; margin-right: 0; width: 100%; }
     </style>
 </head>
 <body>
@@ -56,105 +102,182 @@
             <nav class="col-md-3 col-lg-2 sidebar d-none d-md-block">
                 <div class="text-center mt-4 mb-5">
                     <i class="fa-solid fa-tooth fa-3x mb-2"></i>
-                    <h5 class="fw-bold">Emilly Ebersol</h5> <small>Cirurgiã-Dentista</small> </div>
+                    <h5 class="fw-bold">Emilly Ebersol</h5>
+                    <small>Cirurgiã-Dentista</small>
+                </div>
                 <ul class="nav flex-column">
                     <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fa-solid fa-house"></i> Início</a></li>
                     <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fa-solid fa-calendar-days"></i> Agenda</a></li>
                     <li class="nav-item"><a class="nav-link" href="cadastro.html"><i class="fa-solid fa-users"></i> Pacientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="registros.html"><i class="fa-solid fa-clipboard-list"></i> Registros Diários</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
                     <li class="nav-item"><a class="nav-link" href="precos.html"><i class="fa-solid fa-file-invoice-dollar"></i> Tabela de Preço</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-file-invoice"></i> Controle Recibos</a></li>
                     <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fa-solid fa-chart-pie"></i> Relatórios</a></li>
                     <li class="nav-item mt-3"><a class="nav-link text-warning" href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
                 </ul>
             </nav>
 
             <main class="col-md-9 col-lg-10 p-4">
+                
                 <div class="d-flex justify-content-between align-items-center mb-4 text-white">
                     <div>
                         <h2 class="fw-bold m-0"><i class="fa-solid fa-list-check me-2 opacity-75"></i>Controle de Recibos</h2>
                         <small class="opacity-75">Sincronizado com Registros Diários</small>
                     </div>
-                    <div class="position-relative">
-                        <input type="text" id="buscaRecibo" class="form-control rounded-pill px-4" placeholder="Filtrar paciente..." onkeyup="filtrarRecibos()">
+                    
+                    <input type="text" id="filtroTexto" class="form-control search-glass" placeholder="Filtrar paciente..." onkeyup="filtrarLista()">
+                </div>
+
+                <div class="glass-panel">
+                    <div class="row text-white fw-bold text-uppercase opacity-75 mb-3 px-3 small d-none d-md-flex">
+                        <div class="col-2">Data</div>
+                        <div class="col-4">Paciente e CPF</div>
+                        <div class="col-3">Procedimento / Valor</div>
+                        <div class="col-3 text-end">Ação</div>
+                    </div>
+
+                    <div id="lista-recibos" style="max-height: 70vh; overflow-y: auto; padding-right: 5px; overflow-x: hidden;">
+                        <div class="text-center text-white mt-5"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2">Sincronizando dados...</p></div>
                     </div>
                 </div>
 
-                <div class="glass-container">
-                    <div class="row text-white small fw-bold mb-2 opacity-75 px-3">
-                        <div class="col-2">DATA</div>
-                        <div class="col-4">PACIENTE E CPF</div>
-                        <div class="col-4">PROCEDIMENTO / VALOR</div>
-                        <div class="col-2 text-end">AÇÃO</div>
-                    </div>
-
-                    <div id="lista-recibos">
-                        </div>
-                </div>
             </main>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        let recibosCache = [];
+        let registrosCache = [];
+        let pacientesCache = [];
 
-        window.onload = carregarRecibos;
+        window.onload = async function() {
+            await Promise.all([carregarPacientes(), carregarRegistros()]);
+            renderizarLista();
+        };
 
-        async function carregarRecibos() {
+        async function carregarPacientes() {
             try {
-                // Buscamos os dados dos Registros Diários
-                const res = await fetch('/api/registros');
-                const registros = await res.json();
-                
-                // A MÁGICA ESTÁ AQUI: Filtramos para ignorar valores R$ 0,00
-                recibosCache = registros.filter(r => {
-                    const valorNum = parseFloat(r.valor.replace(',', '.'));
-                    return valorNum > 0; // Só entra na lista se for maior que zero
-                });
-
-                renderizarRecibos(recibosCache);
-            } catch (e) {
-                console.error("Erro ao carregar recibos:", e);
-            }
+                const res = await fetch('/api/pacientes');
+                pacientesCache = await res.json();
+            } catch (e) { console.error("Erro pacientes"); }
         }
 
-        function renderizarRecibos(lista) {
+        async function carregarRegistros() {
+            try {
+                const res = await fetch('/api/registros');
+                registrosCache = await res.json();
+            } catch (e) { console.error("Erro registros"); }
+        }
+
+        function renderizarLista(lista = registrosCache) {
             const container = document.getElementById('lista-recibos');
             container.innerHTML = '';
 
-            lista.forEach(r => {
-                const item = `
-                <div class="glass-item">
-                    <div class="row align-items-center">
-                        <div class="col-2 fw-bold text-muted">${formatarData(r.data)}</div>
-                        <div class="col-4">
-                            <div class="fw-bold text-dark">${r.paciente}</div>
-                            <span class="cpf-badge"><i class="fa-solid fa-id-card me-1"></i> ${r.cpf || 'Cadastrar CPF'}</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="fw-bold">${r.procedimento}</div>
-                            <div class="valor-recibo">R$ ${r.valor}</div>
-                        </div>
-                        <div class="col-2 text-end">
-                            <button class="btn btn-sm btn-outline-warning fw-bold">
-                                <i class="fa-regular fa-square me-1"></i> PENDENTE
-                            </button>
+            if (lista.length === 0) {
+                container.innerHTML = '<div class="text-center text-white mt-5 opacity-50"><h5>Nenhum registro financeiro encontrado.</h5></div>';
+                return;
+            }
+
+            lista.sort((a,b) => {
+                const statusA = a.statusRecibo || 'Pendente';
+                const statusB = b.statusRecibo || 'Pendente';
+                if (statusA === 'Pendente' && statusB !== 'Pendente') return -1;
+                if (statusA !== 'Pendente' && statusB === 'Pendente') return 1;
+                return b.data.localeCompare(a.data);
+            });
+
+            lista.forEach(reg => {
+                const pacienteInfo = pacientesCache.find(p => p.nome.trim().toLowerCase() === reg.paciente.trim().toLowerCase());
+                
+                let htmlCPF = pacienteInfo && pacienteInfo.cpf 
+                    ? `<span class="cpf-tag"><i class="fa-regular fa-id-card me-2"></i>${pacienteInfo.cpf}</span>`
+                    : `<span class="cpf-tag cpf-missing"><i class="fa-solid fa-triangle-exclamation me-1"></i> Cadastrar CPF</span>`;
+
+                const valorFormatado = parseFloat(reg.valor.replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const dataFormatada = reg.data.split('-').reverse().join('/');
+                
+                const statusAtual = reg.statusRecibo || 'Pendente';
+                const isPendente = statusAtual === 'Pendente';
+                
+                // Variáveis para montar o botão
+                const classeBtn = isPendente ? 'status-pendente' : 'status-emitido';
+                const textoBtn = isPendente ? 'PENDENTE' : 'EMITIDO';
+                const iconeBtn = isPendente ? '<i class="fa-regular fa-square check-icon"></i>' : '<i class="fa-regular fa-check-square check-icon"></i>';
+                
+                container.innerHTML += `
+                    <div class="glass-item">
+                        <div class="row row-fix align-items-center">
+                            <div class="col-md-2 text-muted fw-bold small">${dataFormatada}</div>
+                            <div class="col-md-4">
+                                <div class="fw-bold text-dark text-truncate">${reg.paciente}</div>
+                                <div>${htmlCPF}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-dark fw-bold text-truncate mb-1" title="${reg.procedimento}">${reg.procedimento}</div>
+                                <div class="text-success fw-bold bg-light d-inline-block px-2 rounded small">${valorFormatado}</div>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <button class="status-btn ${classeBtn} shadow-sm" 
+                                     id="btn-status-${reg.id}"
+                                     onclick="alternarStatus(this, ${reg.id}, '${statusAtual}')"
+                                     type="button">
+                                    ${iconeBtn} ${textoBtn}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>`;
-                container.innerHTML += item;
+                `;
             });
         }
 
-        function formatarData(dataISO) {
-            const [ano, mes, dia] = dataISO.split('-');
-            return `${dia}/${mes}/${ano}`;
+        
+        async function alternarStatus(btnElement, id, statusAtual) {
+            const novoStatus = statusAtual === 'Pendente' ? 'Emitido' : 'Pendente';
+            
+            // 1. Atualiza visualmente NA HORA (sem esperar servidor)
+            const isNovoPendente = novoStatus === 'Pendente';
+            
+            btnElement.className = `status-btn shadow-sm ${isNovoPendente ? 'status-pendente' : 'status-emitido'}`;
+            btnElement.innerHTML = isNovoPendente 
+                ? '<i class="fa-regular fa-square check-icon"></i> PENDENTE' 
+                : '<i class="fa-regular fa-check-square check-icon"></i> EMITIDO';
+            
+            // Atualiza o onclick para a próxima vez
+            btnElement.onclick = () => alternarStatus(btnElement, id, novoStatus);
+
+            // 2. Envia para o servidor em segundo plano
+            try {
+                const res = await fetch('/api/registros/status', {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id: id, novoStatus: novoStatus })
+                });
+
+                if (!res.ok) {
+                    throw new Error("Falha ao salvar");
+                }
+                
+                // Atualiza o cache local silenciosamente para manter consistência
+                const itemCache = registrosCache.find(r => r.id === id);
+                if(itemCache) itemCache.statusRecibo = novoStatus;
+
+            } catch (erro) { 
+                // Se der erro, reverte o botão e avisa
+                alert("Erro de conexão. A alteração não foi salva.");
+                // Reverte visual (lógica inversa)
+                btnElement.className = `status-btn shadow-sm ${statusAtual === 'Pendente' ? 'status-pendente' : 'status-emitido'}`;
+                btnElement.innerHTML = statusAtual === 'Pendente' 
+                    ? '<i class="fa-regular fa-square check-icon"></i> PENDENTE' 
+                    : '<i class="fa-regular fa-check-square check-icon"></i> EMITIDO';
+                 btnElement.onclick = () => alternarStatus(btnElement, id, statusAtual);
+            }
         }
 
-        function filtrarRecibos() {
-            const termo = document.getElementById('buscaRecibo').value.toLowerCase();
-            const filtrados = recibosCache.filter(r => r.paciente.toLowerCase().includes(termo));
-            renderizarRecibos(filtrados);
+        function filtrarLista() {
+            const termo = document.getElementById('filtroTexto').value.toLowerCase();
+            const filtrados = registrosCache.filter(r => r.paciente.toLowerCase().includes(termo));
+            renderizarLista(filtrados);
         }
     </script>
 </body>
