@@ -7,9 +7,16 @@ const fs = require('fs');
 
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-app.use(express.static(path.join(__dirname))); 
+// Servir arquivos estáticos das pastas organizadas
+app.use(express.static(path.join(__dirname, 'html'))); // Lê as páginas HTML
+app.use('/css', express.static(path.join(__dirname, 'css'))); // Lê o CSS
+app.use('/js', express.static(path.join(__dirname, 'js'))); // Lê o JS do Front-end
+app.use('/img', express.static(path.join(__dirname, 'img'))); // Lê as imagens (se tiver)
+
+// Redireciona a raiz (/) ou qualquer erro para a tela de login/index
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'html', 'index.html'));
+});
 
 // --- ID DA SUA PLANILHA ---
 const SPREADSHEET_ID = '15TvWPyk3UOnk37XK1pIHjLaxA7zE9LYuDuFyibcCNCg'; 
@@ -196,7 +203,7 @@ app.delete('/api/precos', async (req, res) => { try{const s=await acessarPlanilh
 // --- NOTAS ---
 app.get('/api/notas', async (req, res) => { try { const sheet = await acessarPlanilha('NOTAS'); const rows = await sheet.getRows(); res.json(rows.map((r, i) => ({ id: i, data: r.get('Data'), paciente: r.get('Paciente'), cpf: r.get('CPF'), procedimento: r.get('Procedimento'), valor: r.get('Valor'), status: r.get('Status') }))); } catch (e) { res.status(500).json({ error: e.message }); } });
 
-app.get('*', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
+app.get('*', (req, res) => { res.sendFile(path.join(__dirname, 'html', 'index.html')); });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => { console.log(`🚀 Servidor rodando na porta ${PORT}`); });
