@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+app.use(express.json());
 
 // Servir arquivos estáticos das pastas organizadas
 app.use(express.static(path.join(__dirname, 'html'))); // Lê as páginas HTML
@@ -13,10 +14,7 @@ app.use('/css', express.static(path.join(__dirname, 'css'))); // Lê o CSS
 app.use('/js', express.static(path.join(__dirname, 'js'))); // Lê o JS do Front-end
 app.use('/img', express.static(path.join(__dirname, 'img'))); // Lê as imagens (se tiver)
 
-// Redireciona a raiz (/) ou qualquer erro para a tela de login/index
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'html', 'index.html'));
-});
+
 
 // --- ID DA SUA PLANILHA ---
 const SPREADSHEET_ID = '15TvWPyk3UOnk37XK1pIHjLaxA7zE9LYuDuFyibcCNCg'; 
